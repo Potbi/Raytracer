@@ -4,16 +4,16 @@
 #include "strahl.h"
 #include "plan.h"
 
-TVektor Cross_product(TVektor a, TVektor b){
-                //calculates the cross product between two vectors
-                TVektor c;
-                c = TVektor(
-                  a[1]*b[2]-a[2]*b[1],
-                  a[2]*b[0]-a[0]*b[2],
-                  a[0]*b[1]-a[1]*b[0]
-                );
-                return c;
-        }
+TVektor Kreuzprodukt(TVektor a, TVektor b){
+//Kreuzprodukt der Vektoren a und b berechnen.
+TVektor c;
+c = TVektor(
+    a[1]*b[2]-a[2]*b[1],
+    a[2]*b[0]-a[0]*b[2],
+    a[0]*b[1]-a[1]*b[0]
+    );
+return c;
+}
 
 class Kamera {
 public:
