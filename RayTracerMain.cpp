@@ -17,23 +17,44 @@
 Kamera* kamera;
 Szene* szene;
 
-
 class TUser : public TPlan {
 
     TColor berechneFarbe(Szene szene, Strahl s){
         float abstand;
-        float abstandMin  = std::numeric_limits<float>::infinity();//unendlich
+        float abstandMin  = std::numeric_limits<float>::infinity();     //unendlich
         TColor farbe = szene.hintergrund;
+
+        int gewinner=-1;
 
         for(int i=0; i<szene.anzObjekte; i++){
             abstand = szene.objekte[i]->schnitt(s);
             if ((abstand > 0)&&(abstand < abstandMin)){
                 abstandMin=abstand;
-                farbe = szene.objekte[i]->farbe;
+                gewinner = i;
+                //farbe = szene.objekte[i]->farbe;
             }
         }
+
+        TVektor lambertian;
+        TVektor reflection;
+
+        // if (gewinner > -1) :
+        // # Lambertian Shading: ....
+
+        // szene.objekte[gewinner]->material->reflekt * reflection
+
+
         return farbe;
     }
+
+    TColor farbeMischen(TColor c1, TColor c2){
+        int r = int((GetRValue(c1)+GetRValue(c2))/2);
+        int g = int((GetGValue(c1)+GetGValue(c2))/2);
+        int b = int((GetBValue(c1)+GetBValue(c2))/2);
+    return RGB(r,g,b);
+}
+
+
 
     void Init(){
         // Kamera initialisieren.
