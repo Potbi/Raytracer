@@ -15,13 +15,6 @@
 #include "szene.h"
 
 
-//Szene szene1;
-//Kamera cam;
-TVektor urspr, blick, oben;
-int i;
-
-
-
 class TUser : public TPlan {
     TColor berechneFarbe(Szene szene, Strahl s){
         float abstand;
