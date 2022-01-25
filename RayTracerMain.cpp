@@ -31,7 +31,7 @@ class TUser : public TPlan {
             if ((abstand > 0)&&(abstand < abstandMin)){
                 abstandMin=abstand;
                 gewinner = i;
-                //farbe = szene.objekte[i]->farbe;
+                farbe = szene.objekte[i]->farbe;
             }
         }
 
@@ -75,8 +75,8 @@ class TUser : public TPlan {
     
     void Run(){
         // Durch jeden Pixel iterieren.
-        for (int x=0; x<XAUFL; x++){
-            for (int y=0; y<YAUFL; y++){
+        for (int x=0; x<kamera->aufloesungX; x++){
+            for (int y=0; y<kamera->aufloesungY; y++){
                 SetPixel(x,y,berechneFarbe(*szene, kamera->gibStrahl(x,y)));
             }
         }
