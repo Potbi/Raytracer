@@ -19,40 +19,63 @@ Szene* szene;
 
 class TUser : public TPlan {
 
-    TColor berechneFarbe(Szene szene, Strahl s){
+    TColor berechneFarbe(Szene szene, Strahl s, int iteration){
+
+        // Abbruchbedingung Rekursion: wenn maximale Anzahl Strahlen erreicht -> keinen Farbbeitrag mehr ermitteln.
+        if (iteration == 0) return Schwarz;
+
+        // Strahl mit der Szene schneiden und vorderstes Schnittobjekt mit Index i ermitteln.
         float abstand;
-        float abstandMin  = std::numeric_limits<float>::infinity();     //unendlich
-        TColor farbe = szene.hintergrund;
-
-        int gewinner=-1;
-
+        float abstandMin  = std::numeric_limits<float>::infinity();
+        int gewinner = -1;
         for(int i=0; i<szene.anzObjekte; i++){
-            abstand = szene.objekte[i]->schnitt(s);
+            abstand = szene.objekte[i]->schnitt(s).entfernung;
             if ((abstand > 0)&&(abstand < abstandMin)){
-                abstandMin=abstand;
+                abstandMin = abstand;
                 gewinner = i;
-                farbe = szene.objekte[i]->farbe;
             }
         }
 
-        TVektor lambertian;
-        TVektor reflection;
+        // Wenn ein Objekt geschnitten wurde, den Farbbeitrag nach Shading-Modellen ermitteln
+        if (gewinner >=0){
+            // Schnittinformationen speichern.
+            s = szene.objekte[gewinner]->schnitt(s);
 
-        // if (gewinner > -1) :
-        // # Lambertian Shading: ....
+            // Lambertian Shading:
+            TVektor lambertian;
 
-        // szene.objekte[gewinner]->material->reflekt * reflection
+            // Reflection Shading (nur, wenn Material reflektierend):
+            if (szene.objekte[gewinner]->material->reflekt > 0){
+                // Strahl reflektieren (Einfallswinkel = Ausfallswinkel).
+                Strahl reflektionsStrahl;
+                reflektionsStrahl.ursprung = s.schnittpunkt+0.01*s.normale;
+                reflektionsStrahl.richtung = s.richtung - 2 * (s.richtung * s.normal) * s.normal;
 
+                // Farbe rekursiv mit reflektiertem Strahl berechnen:
+                TColor reflection;
+                reflection = berechneFarbe(szene,reflektionsStrahl,iteration-1);
+            }
 
-        return farbe;
+            // Farbbeiträge mischen:
+                // TColor farbe;
+                // farbe = szene.objekte[gewinner]->material->reflekt * reflection + ... * lambertian
+                // return farbe;
+        }
+
+        // Wenn kein Objekt getroffen wurde, Hintergrundfarbe der Szene zurückgeben.
+        return szene.hintergrund;
     }
 
-    TColor farbeMischen(TColor c1, TColor c2){
-        int r = int((GetRValue(c1)+GetRValue(c2))/2);
-        int g = int((GetGValue(c1)+GetGValue(c2))/2);
-        int b = int((GetBValue(c1)+GetBValue(c2))/2);
+    TColor farbeMischen(TColor c1, TColor c2, float anteil){
+        // mischt zwei Farben c1 und c2
+        // float anteil gibt den Anteil von c1 an, zwischen 0 und 1
+        int r = int((anteil*GetRValue(c1)+(1-anteil)*GetRValue(c2)));
+        int g = int((anteil*GetGValue(c1)+(1-anteil)*GetGValue(c2)));
+        int b = int((anteil*GetBValue(c1)+(1-anteil)*GetBValue(c2)));
     return RGB(r,g,b);
-}
+    }
+
+
 
 
 
