@@ -19,6 +19,9 @@ Kamera* kamera;
 Szene* szene;
 
 int totalpx;
+int tilesize;
+int currenttile;
+int rows, columns;
 
 class TUser : public TPlan {
     float abs(float zahl){
@@ -95,6 +98,7 @@ class TUser : public TPlan {
                 // Farbe rekursiv mit reflektiertem Strahl berechnen:
                 reflection = berechneFarbe(szene,reflektionsStrahl,iteration-1);
             }
+
             // ### FARBBEITRAEGE MISCHEN ###
             float ref_anteil = szene.objekte[gewinner]->material.reflekt;
             return reflection*ref_anteil+lambertian*(1-ref_anteil);
@@ -140,24 +144,44 @@ class TUser : public TPlan {
 
         // Szene initialisieren.
         szene = new Szene();
-        Material mtl_rot(Rot, 0.5, 0);
-        Material mtl_leuchte(Weiss, 1, 1);
-        szene->kugelHinzufuegen(TVektor(0,0,0), mtl_rot, 1);
-        szene->kugelHinzufuegen(TVektor(0,0,10), mtl_leuchte, 1);
-        szene->kugelHinzufuegen(TVektor(2,2,0), mtl_rot, 1);
+        Material mtl_rot(Weiss, 0.2, 0);
+        Material mtl_spiegel(Weiss, 0.2, 0);
+        Material mtl_leuchte(Weiss, 0, 1);
+        szene->kugelHinzufuegen(TVektor(0,0,-2), mtl_rot, 1);
+        szene->kugelHinzufuegen(TVektor(0,0,2), mtl_spiegel, 1);
+        szene->kugelHinzufuegen(oben*300, mtl_leuchte, 300);
+
+        // Einstellungen für Kachel-Rendern.
+        tilesize = 20;
+        currenttile = 0;
+        columns = ceil((float)kamera->aufloesungX/tilesize);
+        rows = ceil((float)kamera->aufloesungY/tilesize);
     }
 
     void Run(){
-        // Durch jeden Pixel iterieren.
-        for (int x=0; x<kamera->aufloesungX; x++){
-            for (int y=0; y<kamera->aufloesungY; y++){
+        CallRun = renderTile(currenttile);
+    }
+
+    float min(float a, float b){
+        return((a<b) ? a : b);
+    }
+
+    bool renderTile(int &currenttile){
+        // Rendert die Pixel im Bereich der aktuellen Kachel
+        int currentrow = floor((float)currenttile/columns) + 1;
+        int currentcolumn = currenttile % columns +1;
+        bool finish = (((currenttile+1) < (columns * rows)) ? true : false);
+        for (int x=(currentcolumn-1)*tilesize; x<min(currentcolumn*tilesize,kamera->aufloesungX); x++){
+            Busy = PlanString("Fortschritt: ") + 100*totalpx/(kamera->aufloesungX*kamera->aufloesungY) + PlanString(" %");
+            for (int y=(currentrow-1)*tilesize; y<min(currentrow*tilesize,kamera->aufloesungY); y++){
                 TVektor f = berechneFarbe(*szene, kamera->gibStrahl(x,y), 3);
                 TColor farbe(RGB(f[0],f[1],f[2]));
                 SetPixel(x,y,farbe);
                 totalpx++;
-                Busy = PlanString("Fortschritt: ") + 100*totalpx/(kamera->aufloesungX*kamera->aufloesungY) + PlanString(" %");
+                }
             }
-        }
+        currenttile++;
+        return finish;
     }
 
 };
