@@ -56,18 +56,23 @@ class TUser : public TPlan {
             float beleuchtung = 0;
             for(int i=0; i<szene.anzObjekte; i++){
                 if (szene.objekte[i]->material.emission > 0){
-                    Strahl lichtstrahl(s_treffer.schnittpunkt, szene.objekte[i]->position - s.schnittpunkt);
+                    // Objekt hat emmisionsmaterial
+                    // Vektor der den schnittpunkt mit der lichtquelle verbindet
+                    TVektor richtung = szene.objekte[i]->position - s.schnittpunkt;
+                    Strahl lichtstrahl(s_treffer.schnittpunkt, richtung);
                     lichtstrahl = szene.objekte[i]->schnitt(lichtstrahl);
-                    if (lichtstrahl.entfernung > 0){
+                    if (lichtstrahl.entfernung < Norm(richtung)){
+                        // wenn schnittpunkt näher dran als die aktuelle emmisionsquelle
                         float parralelitaet;
-                        parralelitaet = parralelitaetZweiVektoren(lichtstrahl.richtung, s_treffer.normale);
-                        beleuchtung *= (parralelitaet - 1) * -1;
+                        parral = parralelitaetZweiVektoren(lichtstrahl.richtung, s_treffer.normale);
+                        beleuchtung += (parral - 1) * -1;
                     }
                 }
             }
             int r = int(GetRValue(cszene.objekte[gewinner]->material.farbe));
             int g = int(GetGValue(cszene.objekte[gewinner]->material.farbe));
             int b = int(GetBValue(cszene.objekte[gewinner]->material.farbe));
+            if (beleuchtung > 1){beleuchtung = 1}
             lambertian = TVektor(r,g,b) * beleuchtung;
         }
 
