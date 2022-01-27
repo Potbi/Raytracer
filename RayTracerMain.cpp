@@ -37,37 +37,28 @@ class TUser : public TPlan {
 
     TVektor berechneFarbe(Szene szene, Strahl s, int iteration){
         // Abbruchbedingung Rekursion: wenn maximale Anzahl Strahlen erreicht -> keinen Farbbeitrag mehr ermitteln.
-        if (iteration == 0) return Schwarz;
-        Strahl s_treffer;
+        if (iteration == 0) return TVektor(0,0,0);
 
         // Strahl mit der Szene schneiden und vorderstes Schnittobjekt mit Index i ermitteln.
         float abstand;
         float abstandMin  = std::numeric_limits<float>::infinity();
         int gewinner = -1;
         for(int i=0; i<szene.anzObjekte; i++){
-            Strahl s2 = szene.objekte[i]->schnitt(s);
-            //std::cout<<s2.entfernung<<"\n";
-            //szene.objekte[i]->schnitt(s);
-            if ((s2.entfernung > 0)&&(s2.entfernung < abstandMin)){
-                abstandMin=s2.entfernung;
-                //std::cout<<"("<<s2.richtung[0]<<","<<s2.richtung[1]<<","<<s2.richtung[2]<<")\n";
-                s_treffer = Strahl(s2); // ACHTUNG
-                //std::cout<<"("<<s_treffer.richtung[0]<<","<<s_treffer.richtung[1]<<","<<s_treffer.richtung[2]<<")\n";
+            abstand = szene.objekte[i]->schnitt(s).entfernung;
+            if ((abstand > 0)&&(abstand < abstandMin)){
+                abstandMin=abstand;
                 gewinner = i;
-
             }
-
         }
-        // Wenn kein Objekt getroffen wurde, Hintergrundfarbe der Szene zurueckgeben.
-        TVektor lambertian = szene.hintergrund;
-        TVektor reflection = NULL;
 
         // Wenn ein Objekt geschnitten wurde, den Farbbeitrag nach Shading-Modellen ermitteln
         if (gewinner >=0){
-            // Schnittinformationen speichern.
-            Strahl s(s_treffer);
-            // # Lambertian Shading: ....
-            std::cout<<"("<<s_treffer.richtung[0]<<","<<s_treffer.richtung[1]<<","<<s_treffer.richtung[2]<<")\n";
+
+            // Schnittinformationen in s_treffer speichern.
+            Strahl s_treffer = szene.objekte[gewinner]->schnitt(s);
+
+            // ### LAMBERTIAN SHADING ###
+            TVektor lambertian;
             float beleuchtung = 0;
             for(int i=0; i<szene.anzObjekte; i++){
                 if (szene.objekte[i]->material.emission > 0){
@@ -79,8 +70,6 @@ class TUser : public TPlan {
                     if (lichtstrahl2.entfernung < Norm(richtung)){
                         // wenn schnittpunkt n�her dran als die aktuelle emmisionsquelle
                         float parral;
-                        std::cout<<"("<<lichtstrahl2.richtung[0]<<","<<lichtstrahl2.richtung[1]<<","<<lichtstrahl2.richtung[2]<<")\n";
-                        std::cout<<"("<<s.normale[0]<<","<<s.normale[1]<<","<<s.normale[2]<<")\n";
                         parral = parallelitaetZweiVektoren(lichtstrahl2.richtung, s.normale);
                         beleuchtung += (parral - 1) * -1;
                     }
@@ -93,28 +82,38 @@ class TUser : public TPlan {
             lambertian = TVektor(r,g,b) * beleuchtung;
 
 
-            // Reflection Shading (nur, wenn Material reflektierend):
+            // ### REFLECTION SHADING ### (nur, wenn Material reflektierend)
+            TVektor reflection;
             if (szene.objekte[gewinner]->material.reflekt > 0){
                 // Strahl reflektieren (Einfallswinkel = Ausfallswinkel).
-                Strahl reflektionsStrahl;        
-                reflektionsStrahl.richtung = s.richtung - 2 * (s.richtung * s.normale) * s.normale;
-                reflektionsStrahl.ursprung = s.schnittpunkt+0.01*reflektionsStrahl.richtung;
+                Strahl reflektionsStrahl;
+                reflektionsStrahl.richtung = s_treffer.richtung - 2 * (s_treffer.richtung * s_treffer.normale) * s_treffer.normale;
+                EinheitsVektor(reflektionsStrahl.richtung);
+                reflektionsStrahl.ursprung = s_treffer.schnittpunkt +0.01*reflektionsStrahl.richtung;
+                //std::cout<<"("<<reflektionsStrahl.ursprung[0]<<","<<reflektionsStrahl.ursprung[1]<<","<<reflektionsStrahl.ursprung[2]<<")\n";
 
                 // Farbe rekursiv mit reflektiertem Strahl berechnen:
-                TVektor reflection;
                 reflection = berechneFarbe(szene,reflektionsStrahl,iteration-1);
             }
-
-            if (szene.objekte[gewinner]->material.reflekt > 0){
-                return szene.objekte[gewinner]->material.reflekt * reflection + lambertian * (1-szene.objekte[gewinner]->material.reflekt);
-            }
-            else{
-                return lambertian;
-            }
+            // ### FARBBEITRAEGE MISCHEN ###
+            return reflection;
         }
-
-        return szene.hintergrund;
+        // Wenn kein Objekt geschnitten wurde, Hintergrundfarbe zurueckgeben.
+        TColor hintergrund = hintergrundFarbe(s.richtung[2],-1,1);
+        return TVektor(GetRValue(hintergrund),GetGValue(hintergrund),GetBValue(hintergrund));
     }
+
+    float map(float x, float start1, float stop1, float start2, float stop2){
+        return(start2+((x-start1)/(stop1-start1))*(stop2-start2));
+    }
+
+    TColor hintergrundFarbe(float x, float start, float stop){
+        int r = (int)(map(x,start,stop,255,20)*100.0/255);
+        int g = (int)(map(x,start,stop,255,100)*100.0/255);
+        int b = (int)(map(x,start,stop,255,200)*100.0/255);
+        return RGBSkala(r,g,b);
+    }
+
 
     TColor farbeMischen(TColor c1, TColor c2, float anteil){
         // mischt zwei Farben c1 und c2
@@ -126,34 +125,33 @@ class TUser : public TPlan {
     }
 
 
-
-
-
     void Init(){
         // Kamera initialisieren.
         TVektor kam_pos(7,-7,7);
         TVektor blick(-7,7,-7);
         TVektor oben(-7,7,7);
 
-        const int XAUFL = 20;
-        const int YAUFL = 20;
-        const float BRENN = 5;
+        const int XAUFL = 100;
+        const int YAUFL = 100;
+        const float BRENN = 4;
 
         kamera = new Kamera(kam_pos, blick, oben, XAUFL, YAUFL, BRENN);
 
         // Szene initialisieren.
         szene = new Szene();
-        Material mtl_rot(Rot, 0, 0);
-        Material mtl_leuchte(Weiss, 0, 1);
-        szene->kugelHinzufuegen(TVektor(0,0,0), mtl_rot, 3.5);
-        szene->kugelHinzufuegen(TVektor(10,-10,10), mtl_leuchte, 0.5);
+        Material mtl_rot(Rot, 1, 0);
+        Material mtl_leuchte(Weiss, 1, 1);
+        szene->kugelHinzufuegen(TVektor(0,0,0), mtl_rot, 1);
+        szene->kugelHinzufuegen(TVektor(2,2,0), mtl_rot, 1);
+
+        //szene->kugelHinzufuegen(TVektor(10,-10,10), mtl_leuchte, 0.5);
     }
 
     void Run(){
         // Durch jeden Pixel iterieren.
         for (int x=0; x<kamera->aufloesungX; x++){
             for (int y=0; y<kamera->aufloesungY; y++){
-                TVektor f = berechneFarbe(*szene, kamera->gibStrahl(x,y), 7);
+                TVektor f = berechneFarbe(*szene, kamera->gibStrahl(x,y), 3);
                 TColor farbe(RGB(f[0],f[1],f[2]));
                 SetPixel(x,y,farbe);
                 totalpx++;
