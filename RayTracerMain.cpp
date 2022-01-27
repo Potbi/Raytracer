@@ -19,27 +19,58 @@ Szene* szene;
 
 class TUser : public TPlan {
 
+    float parralelitaetZweiVektoren(TVektor a, TVektor b){
+                // winkel zwischen Vektoren von 0-1
+                // 1= Parralel 0= Orthogonal
+                float top;
+                float bottom;
+                top = a*b;
+                bottom = Norm(a)*Norm(b);
+                float temp = top/bottom;
+                return sqrt(temp*temp);
+    }
+
     TColor berechneFarbe(Szene szene, Strahl s){
         float abstand;
         float abstandMin  = std::numeric_limits<float>::infinity();     //unendlich
         TColor farbe = szene.hintergrund;
 
         int gewinner=-1;
+        Strahl s_treffer;
 
         for(int i=0; i<szene.anzObjekte; i++){
-            abstand = szene.objekte[i]->schnitt(s);
-            if ((abstand > 0)&&(abstand < abstandMin)){
-                abstandMin=abstand;
+            s = szene.objekte[i]->schnitt(s);
+            if ((s.entfernung > 0)&&(s.entfernung < abstandMin)){
+                abstandMin=s.entfernung;
+                s_treffer=s;
                 gewinner = i;
                 //farbe = szene.objekte[i]->farbe;
             }
         }
 
-        TVektor lambertian;
+        TVektor lambertian = TVektor(0,0,0);
         TVektor reflection;
 
-        // if (gewinner > -1) :
+        if (gewinner > -1){
         // # Lambertian Shading: ....
+            float beleuchtung = 0;
+            for(int i=0; i<szene.anzObjekte; i++){
+                if (szene.objekte[i]->material.emission > 0){
+                    Strahl lichtstrahl(s_treffer.schnittpunkt, szene.objekte[i]->position - s.schnittpunkt);
+                    lichtstrahl = szene.objekte[i]->schnitt(lichtstrahl);
+                    if (lichtstrahl.entfernung > 0){
+                        float parralelitaet;
+                        parralelitaet = parralelitaetZweiVektoren(lichtstrahl.richtung, s_treffer.normale);
+                        beleuchtung *= (parralelitaet - 1) * -1;
+                    }
+                }
+            }
+            int r = int(GetRValue(cszene.objekte[gewinner]->material.farbe));
+            int g = int(GetGValue(cszene.objekte[gewinner]->material.farbe));
+            int b = int(GetBValue(cszene.objekte[gewinner]->material.farbe));
+            lambertian = TVektor(r,g,b) * beleuchtung;
+        }
+
 
         // szene.objekte[gewinner]->material->reflekt * reflection
 
@@ -72,7 +103,7 @@ class TUser : public TPlan {
         szene = new Szene();
         szene->kugelHinzufuegen(TVektor(0,0,0), Rot, 0.5);
     }
-    
+
     void Run(){
         // Durch jeden Pixel iterieren.
         for (int x=0; x<XAUFL; x++){
