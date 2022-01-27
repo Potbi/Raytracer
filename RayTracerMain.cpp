@@ -30,6 +30,8 @@ class TUser : public TPlan {
                 float top;
                 float bottom;
                 top = a*b;
+                //std::cout<<"("<<a[0]<<","<<a[1]<<","<<a[2]<<")\n";
+                //std::cout<<"("<<b[0]<<","<<b[1]<<","<<b[2]<<")\n";
                 bottom = Norm(a)*Norm(b);
                 float temp = top/bottom;
                 return abs(temp);
@@ -51,8 +53,7 @@ class TUser : public TPlan {
             if ((s2.entfernung > 0)&&(s2.entfernung < abstandMin)){
                 abstandMin=s2.entfernung;
                 //std::cout<<"("<<s2.richtung[0]<<","<<s2.richtung[1]<<","<<s2.richtung[2]<<")\n";
-                s_treffer = Strahl(s2); // ACHTUNG
-                //std::cout<<"("<<s_treffer.richtung[0]<<","<<s_treffer.richtung[1]<<","<<s_treffer.richtung[2]<<")\n";
+                s_treffer = s2; // ACHTUNG
                 gewinner = i;
 
             }
@@ -64,25 +65,23 @@ class TUser : public TPlan {
 
         // Wenn ein Objekt geschnitten wurde, den Farbbeitrag nach Shading-Modellen ermitteln
         if (gewinner >=0){
-            // Schnittinformationen speichern.
-            Strahl s(s_treffer);
+            // Schnittinformationen speichern.;
             // # Lambertian Shading: ....
-            std::cout<<"("<<s_treffer.richtung[0]<<","<<s_treffer.richtung[1]<<","<<s_treffer.richtung[2]<<")\n";
             float beleuchtung = 0;
             for(int i=0; i<szene.anzObjekte; i++){
                 if (szene.objekte[i]->material.emission > 0){
                     // Objekt hat emmisionsmaterial
                     // Vektor der den schnittpunkt mit der lichtquelle verbindet
-                    TVektor richtung = szene.objekte[i]->position - s.schnittpunkt;
-                    Strahl lichtstrahl(s.schnittpunkt, richtung);
-                    Strahl lichtstrahl2(szene.objekte[i]->schnitt(lichtstrahl));
+
+                    TVektor richtung = szene.objekte[i]->position - s_treffer.schnittpunkt;
+                    Strahl lichtstrahl(s_treffer.schnittpunkt, richtung);
+                    Strahl lichtstrahl2 = szene.objekte[i]->schnitt(lichtstrahl);
+
                     if (lichtstrahl2.entfernung < Norm(richtung)){
                         // wenn schnittpunkt n�her dran als die aktuelle emmisionsquelle
                         float parral;
-                        std::cout<<"("<<lichtstrahl2.richtung[0]<<","<<lichtstrahl2.richtung[1]<<","<<lichtstrahl2.richtung[2]<<")\n";
-                        std::cout<<"("<<s.normale[0]<<","<<s.normale[1]<<","<<s.normale[2]<<")\n";
-                        parral = parallelitaetZweiVektoren(lichtstrahl2.richtung, s.normale);
-                        beleuchtung += (parral - 1) * -1;
+                        parral = parallelitaetZweiVektoren(lichtstrahl2.richtung, s_treffer.normale);
+                        beleuchtung += parral;
                     }
                 }
             }
@@ -97,8 +96,8 @@ class TUser : public TPlan {
             if (szene.objekte[gewinner]->material.reflekt > 0){
                 // Strahl reflektieren (Einfallswinkel = Ausfallswinkel).
                 Strahl reflektionsStrahl;        
-                reflektionsStrahl.richtung = s.richtung - 2 * (s.richtung * s.normale) * s.normale;
-                reflektionsStrahl.ursprung = s.schnittpunkt+0.01*reflektionsStrahl.richtung;
+                reflektionsStrahl.richtung = s_treffer.richtung - 2 * (s_treffer.richtung * s_treffer.normale) * s_treffer.normale;
+                reflektionsStrahl.ursprung = s_treffer.schnittpunkt+0.01*reflektionsStrahl.richtung;
 
                 // Farbe rekursiv mit reflektiertem Strahl berechnen:
                 TVektor reflection;
@@ -131,22 +130,25 @@ class TUser : public TPlan {
 
     void Init(){
         // Kamera initialisieren.
-        TVektor kam_pos(7,-7,7);
-        TVektor blick(-7,7,-7);
-        TVektor oben(-7,7,7);
+        TVektor kam_pos(7,0,0);
+        TVektor blick(-7,0,0);
+        TVektor oben(0,7,0);
 
-        const int XAUFL = 20;
-        const int YAUFL = 20;
-        const float BRENN = 5;
+        const int XAUFL = 300;
+        const int YAUFL = 300;
+        const float BRENN = 1;
 
         kamera = new Kamera(kam_pos, blick, oben, XAUFL, YAUFL, BRENN);
 
         // Szene initialisieren.
         szene = new Szene();
+        szene->hintergrund = Rot;
         Material mtl_rot(Rot, 0, 0);
+        Material mtl_spiegel(Rot, 1, 0);
         Material mtl_leuchte(Weiss, 0, 1);
-        szene->kugelHinzufuegen(TVektor(0,0,0), mtl_rot, 3.5);
-        szene->kugelHinzufuegen(TVektor(10,-10,10), mtl_leuchte, 0.5);
+        szene->kugelHinzufuegen(TVektor(0,0,2), mtl_rot, 2);
+        szene->kugelHinzufuegen(TVektor(0,0,-2), mtl_spiegel, 2);
+        szene->kugelHinzufuegen(oben, mtl_leuchte, 0.5);
     }
 
     void Run(){

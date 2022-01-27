@@ -44,7 +44,7 @@ Strahl Kugel::schnitt(Strahl s){
             //ergebnis.position = s.position;
             //ergebnis.richtung = s.richtung;
             s.entfernung = ((abs(t1) < abs(t2)) ? t1 : t2);
-            s.schnittpunkt = s.ursprung + s.richtung*ergebnis.entfernung;
+            s.schnittpunkt = s.ursprung + s.richtung*s.entfernung;
             s.normale = s.schnittpunkt - this->position;
         }
     }
