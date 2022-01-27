@@ -17,6 +17,7 @@ public:
     Strahl(TVektor ursprung, TVektor richtung);
 
     // Member-Funktionen
+    Strahl operator=(Strahl s);
 
 private:
 

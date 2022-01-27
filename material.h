@@ -1,19 +1,19 @@
 #ifndef MATERIAL_H
 #define MATERIAL_H
 
-#include <vector>
-
+#include "plan.h"
 
 class Material {
 	public:
 		// Member-Variablen
-               TColor farbe;
-               float reflekt;
-               float emission;
+        TColor farbe;
+        float reflekt;
+        float emission;
 
 
 		// Konstruktoren
-               Material (TColor farbe, float reflekt, float emission);
+        Material();
+        Material(TColor farbe, float reflekt, float emission);
 
 
 };

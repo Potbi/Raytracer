@@ -13,12 +13,17 @@
 #include "kugel.h"
 #include "kamera.h"
 #include "szene.h"
+#include "material.h"
+
+Material material(Weiss,0,1);
 
 Kamera* kamera;
 Szene* szene;
 
 class TUser : public TPlan {
-
+    float abs(float zahl){
+        return((zahl > 0) ? zahl : -zahl);
+    }
     float parralelitaetZweiVektoren(TVektor a, TVektor b){
                 // winkel zwischen Vektoren von 0-1
                 // 1= Parralel 0= Orthogonal
@@ -27,7 +32,7 @@ class TUser : public TPlan {
                 top = a*b;
                 bottom = Norm(a)*Norm(b);
                 float temp = top/bottom;
-                return sqrt(temp*temp);
+                return abs(temp);
     }
 
     TVektor berechneFarbe(Szene szene, Strahl s, int iteration){
@@ -40,12 +45,18 @@ class TUser : public TPlan {
         float abstandMin  = std::numeric_limits<float>::infinity();
         int gewinner = -1;
         for(int i=0; i<szene.anzObjekte; i++){
-            s = szene.objekte[i]->schnitt(s);
-            if ((s.entfernung > 0)&&(s.entfernung < abstandMin)){
-                abstandMin=s.entfernung;
-                s_treffer = s; // ACHTUNG
+            Strahl s2 = szene.objekte[i]->schnitt(s);
+            //std::cout<<s2.entfernung<<"\n";
+            //szene.objekte[i]->schnitt(s);
+            if ((s2.entfernung > 0)&&(s2.entfernung < abstandMin)){
+                abstandMin=s2.entfernung;
+                std::cout<<"("<<s2.richtung[0]<<","<<s2.richtung[1]<<","<<s2.richtung[2]<<")\n";
+                s_treffer = Strahl(s2); // ACHTUNG
+                std::cout<<"("<<s_treffer.richtung[0]<<","<<s_treffer.richtung[1]<<","<<s_treffer.richtung[2]<<")\n";
                 gewinner = i;
+
             }
+
         }
         // Wenn kein Objekt getroffen wurde, Hintergrundfarbe der Szene zur�ckgeben.
         TVektor lambertian = szene.hintergrund;
@@ -54,8 +65,9 @@ class TUser : public TPlan {
         // Wenn ein Objekt geschnitten wurde, den Farbbeitrag nach Shading-Modellen ermitteln
         if (gewinner >=0){
             // Schnittinformationen speichern.
-            s = s_treffer;
+            Strahl s(s_treffer);
             // # Lambertian Shading: ....
+            std::cout<<"("<<s_treffer.richtung[0]<<","<<s_treffer.richtung[1]<<","<<s_treffer.richtung[2]<<")\n";
             float beleuchtung = 0;
             for(int i=0; i<szene.anzObjekte; i++){
                 if (szene.objekte[i]->material.emission > 0){
@@ -63,11 +75,13 @@ class TUser : public TPlan {
                     // Vektor der den schnittpunkt mit der lichtquelle verbindet
                     TVektor richtung = szene.objekte[i]->position - s.schnittpunkt;
                     Strahl lichtstrahl(s.schnittpunkt, richtung);
-                    lichtstrahl = szene.objekte[i]->schnitt(lichtstrahl);
-                    if (lichtstrahl.entfernung < Norm(richtung)){
+                    Strahl lichtstrahl2(szene.objekte[i]->schnitt(lichtstrahl));
+                    if (lichtstrahl2.entfernung < Norm(richtung)){
                         // wenn schnittpunkt n�her dran als die aktuelle emmisionsquelle
                         float parral;
-                        parral = parralelitaetZweiVektoren(lichtstrahl.richtung, s.normale);
+                        std::cout<<"("<<lichtstrahl2.richtung[0]<<","<<lichtstrahl2.richtung[1]<<","<<lichtstrahl2.richtung[2]<<")\n";
+                        std::cout<<"("<<s.normale[0]<<","<<s.normale[1]<<","<<s.normale[2]<<")\n";
+                        parral = parralelitaetZweiVektoren(lichtstrahl2.richtung, s.normale);
                         beleuchtung += (parral - 1) * -1;
                     }
                 }
@@ -95,14 +109,15 @@ class TUser : public TPlan {
                 // TColor farbe;
                 // farbe = szene.objekte[gewinner]->material->reflekt * reflection + ... * lambertian
                 // return farbe;
+            if (szene.objekte[gewinner]->material.reflekt > 0){
+                return szene.objekte[gewinner]->material.reflekt * reflection + lambertian * (1-szene.objekte[gewinner]->material.reflekt);
+            }
+            else{
+                return lambertian;
+            }
         }
 
-        if (szene.objekte[gewinner]->material.reflekt > 0){
-            return szene.objekte[gewinner]->material.reflekt * reflection + lambertian * (1-szene.objekte[gewinner]->material.reflekt);
-        }
-        else{
-            return lambertian;
-        }
+        return szene.hintergrund;
     }
 
     TColor farbeMischen(TColor c1, TColor c2, float anteil){
@@ -124,15 +139,18 @@ class TUser : public TPlan {
         TVektor blick(-7,7,-7);
         TVektor oben(-7,7,7);
 
-        const int XAUFL = 720;
-        const int YAUFL = 480;
+        const int XAUFL = 1;
+        const int YAUFL = 1;
         const float BRENN = 5;
 
         kamera = new Kamera(kam_pos, blick, oben, XAUFL, YAUFL, BRENN);
 
         // Szene initialisieren.
         szene = new Szene();
-        szene->kugelHinzufuegen(TVektor(0,0,0), Rot, 0.5);
+        Material mtl_rot(Rot, 0, 0);
+        Material mtl_leuchte(Weiss, 0, 1);
+        szene->kugelHinzufuegen(TVektor(0,0,0), mtl_rot, 3.5);
+        szene->kugelHinzufuegen(TVektor(10,-10,10), mtl_leuchte, 0.5);
     }
 
     void Run(){

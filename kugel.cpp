@@ -1,12 +1,12 @@
 #include "kugel.h"
-#include "material.h"
 #include <iostream>
 
 Kugel::Kugel() {
     // Standardkonstruktor
     TVektor null(3);
-        this->position = null;
-	this->material = material(weiss,0,1);
+    this->position = NULL;
+    this->material = Material();
+	//this->material = Material(Weiss,0.0,1.0);
 	this->radius = 0;
 }
 
@@ -28,8 +28,8 @@ Strahl Kugel::schnitt(Strahl s){
     Strahl ergebnis;
     if (Norm(s.richtung)==0){
         // Richtung des Schnittstrahls darf nicht 0 sein.
-        ergebnis.entfernung = -1
-    } 
+        ergebnis.entfernung = -1;
+    }
     else {
         // quadratische Gleichung l�sen
         float p = 2 * (s.richtung*(s.ursprung - this->position)) / (s.richtung * s.richtung);
@@ -41,13 +41,15 @@ Strahl Kugel::schnitt(Strahl s){
         if (diskriminante >= 0) {
             float t1 = -p/2 + sqrt(diskriminante);
             float t2 = -p/2 - sqrt(diskriminante);
-            ergebnis.entfernung = ((abs(t1) < abs(t2)) ? t1 : t2);
-            ergebnis.schnittpunkt = s.ursprung + s.richtung*ergebnis.entfernung;
-            ergebnis.normale = ergebnis.schnittpunkt - this->position;
+            //ergebnis.position = s.position;
+            //ergebnis.richtung = s.richtung;
+            s.entfernung = ((abs(t1) < abs(t2)) ? t1 : t2);
+            s.schnittpunkt = s.ursprung + s.richtung*ergebnis.entfernung;
+            s.normale = s.schnittpunkt - this->position;
         }
     }
 
-    return ergebnis;
+    return s;
 }
 
 float abs(float zahl){

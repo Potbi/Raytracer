@@ -20,7 +20,7 @@ class Szene {
                 }
 
 		// Member-Funktionen
-		void kugelHinzufuegen (TVektor position, TColor farbe, float radius);
+		void kugelHinzufuegen (TVektor position, Material material, float radius);
 };
 #endif
 
