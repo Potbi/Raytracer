@@ -24,25 +24,30 @@ Kugel::Kugel(float x, float y, float z, Material material, float radius){
 	this->radius = radius;
 }
 
-float Kugel::schnitt(Strahl s){
+Strahl Kugel::schnitt(Strahl s){
+    Strahl ergebnis;
     if (Norm(s.richtung)==0){
         // Richtung des Schnittstrahls darf nicht 0 sein.
-        return -1;
-    } else {
-        // quadratische Gleichung lösen
+        ergebnis.entfernung = -1
+    } 
+    else {
+        // quadratische Gleichung lï¿½sen
         float p = 2 * (s.richtung*(s.ursprung - this->position)) / (s.richtung * s.richtung);
         float q = ((s.ursprung - this->position) * (s.ursprung - this->position) - (this->radius * this->radius)) / (s.richtung * s.richtung);
 
         // Fallunterscheidung Wurzelterm
         float diskriminante = (p*p)/4 - q;
-        if (diskriminante < 0)  return -1;
-        if (diskriminante == 0) return -(p/2);
-        if (diskriminante > 0) {
+        if (diskriminante < 0)  ergebnis.entfernung = -1;
+        if (diskriminante >= 0) {
             float t1 = -p/2 + sqrt(diskriminante);
             float t2 = -p/2 - sqrt(diskriminante);
-        return((abs(t1) < abs(t2)) ? t1 : t2);
+            ergebnis.entfernung = ((abs(t1) < abs(t2)) ? t1 : t2);
+            ergebnis.schnittpunkt = s.ursprung + s.richtung*ergebnis.entfernung;
+            ergebnis.normale = ergebnis.schnittpunkt - this->position;
         }
     }
+
+    return ergebnis;
 }
 
 float abs(float zahl){

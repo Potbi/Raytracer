@@ -30,7 +30,7 @@ class TUser : public TPlan {
                 return sqrt(temp*temp);
     }
 
-    TColor berechneFarbe(Szene szene, Strahl s){
+    TVektor berechneFarbe(Szene szene, Strahl s, int iteration){
         // Abbruchbedingung Rekursion: wenn maximale Anzahl Strahlen erreicht -> keinen Farbbeitrag mehr ermitteln.
         if (iteration == 0) return Schwarz;
         Strahl s_treffer;
@@ -43,13 +43,13 @@ class TUser : public TPlan {
             s = szene.objekte[i]->schnitt(s);
             if ((s.entfernung > 0)&&(s.entfernung < abstandMin)){
                 abstandMin=s.entfernung;
-                s_treffer = s;
+                s_treffer = s; // ACHTUNG
                 gewinner = i;
             }
         }
-
-        TVektor lambertian = TVektor(0,0,0);
-        TVektor reflection;
+        // Wenn kein Objekt getroffen wurde, Hintergrundfarbe der Szene zur�ckgeben.
+        TVektor lambertian = szene.hintergrund;
+        TVektor reflection = NULL;
 
         // Wenn ein Objekt geschnitten wurde, den Farbbeitrag nach Shading-Modellen ermitteln
         if (gewinner >=0){
@@ -62,12 +62,12 @@ class TUser : public TPlan {
                     // Objekt hat emmisionsmaterial
                     // Vektor der den schnittpunkt mit der lichtquelle verbindet
                     TVektor richtung = szene.objekte[i]->position - s.schnittpunkt;
-                    Strahl lichtstrahl(s_treffer.schnittpunkt, richtung);
+                    Strahl lichtstrahl(s.schnittpunkt, richtung);
                     lichtstrahl = szene.objekte[i]->schnitt(lichtstrahl);
                     if (lichtstrahl.entfernung < Norm(richtung)){
                         // wenn schnittpunkt n�her dran als die aktuelle emmisionsquelle
-                        float parralelitaet;
-                        parral = parralelitaetZweiVektoren(lichtstrahl.richtung, s_treffer.normale);
+                        float parral;
+                        parral = parralelitaetZweiVektoren(lichtstrahl.richtung, s.normale);
                         beleuchtung += (parral - 1) * -1;
                     }
                 }
@@ -77,18 +77,17 @@ class TUser : public TPlan {
             int b = int(GetBValue(cszene.objekte[gewinner]->material.farbe));
             if (beleuchtung > 1){beleuchtung = 1}
             lambertian = TVektor(r,g,b) * beleuchtung;
-        }
 
 
             // Reflection Shading (nur, wenn Material reflektierend):
             if (szene.objekte[gewinner]->material->reflekt > 0){
                 // Strahl reflektieren (Einfallswinkel = Ausfallswinkel).
-                Strahl reflektionsStrahl;
-                reflektionsStrahl.ursprung = s.schnittpunkt+0.01*s.normale;
+                Strahl reflektionsStrahl;        
                 reflektionsStrahl.richtung = s.richtung - 2 * (s.richtung * s.normal) * s.normal;
+                reflektionsStrahl.ursprung = s.schnittpunkt+0.01*reflektionsStrahl.richtung;
 
                 // Farbe rekursiv mit reflektiertem Strahl berechnen:
-                TColor reflection;
+                TVektor reflection;
                 reflection = berechneFarbe(szene,reflektionsStrahl,iteration-1);
             }
 
@@ -98,8 +97,12 @@ class TUser : public TPlan {
                 // return farbe;
         }
 
-        // Wenn kein Objekt getroffen wurde, Hintergrundfarbe der Szene zur�ckgeben.
-        return szene.hintergrund;
+        if (reflection != NULL){
+            return szene.objekte[gewinner]->material->reflekt * reflection + lambertian * (1-szene.objekte[gewinner]->material->reflekt)
+        }
+        else{
+            return lambertian;
+        }
     }
 
     TColor farbeMischen(TColor c1, TColor c2, float anteil){
@@ -136,7 +139,9 @@ class TUser : public TPlan {
         // Durch jeden Pixel iterieren.
         for (int x=0; x<kamera->aufloesungX; x++){
             for (int y=0; y<kamera->aufloesungY; y++){
-                SetPixel(x,y,berechneFarbe(*szene, kamera->gibStrahl(x,y)));
+                TVektor f = berechneFarbe(*szene, kamera->gibStrahl(x,y), 7);
+                TColor farbe(RGB(f[0],f[1],f[2]));
+                SetPixel(x,y,farbe);
             }
         }
     }

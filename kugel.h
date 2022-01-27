@@ -20,7 +20,7 @@ public:
     Kugel(float x, float y, float z, Material material, float radius);
 
     // Member-Funktionen
-    float schnitt(Strahl s);
+    Strahl schnitt(Strahl s);
 };
 
 #endif
