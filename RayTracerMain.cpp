@@ -71,7 +71,7 @@ class TUser : public TPlan {
                         // wenn schnittpunkt n�her dran als die aktuelle emmisionsquelle
                         float parral;
                         parral = parallelitaetZweiVektoren(lichtstrahl2.richtung, s.normale);
-                        beleuchtung += (parral - 1) * -1;
+                        beleuchtung += parral;
                     }
                 }
             }
@@ -96,7 +96,7 @@ class TUser : public TPlan {
                 reflection = berechneFarbe(szene,reflektionsStrahl,iteration-1);
             }
             // ### FARBBEITRAEGE MISCHEN ###
-            return reflection;
+            return lambertian;
         }
         // Wenn kein Objekt geschnitten wurde, Hintergrundfarbe zurueckgeben.
         TColor hintergrund = hintergrundFarbe(s.richtung[2],-1,1);
@@ -139,12 +139,11 @@ class TUser : public TPlan {
 
         // Szene initialisieren.
         szene = new Szene();
-        Material mtl_rot(Rot, 1, 0);
+        Material mtl_rot(Rot, 0.5, 0);
         Material mtl_leuchte(Weiss, 1, 1);
         szene->kugelHinzufuegen(TVektor(0,0,0), mtl_rot, 1);
+        szene->kugelHinzufuegen(TVektor(0,0,10), mtl_leuchte, 1);
         szene->kugelHinzufuegen(TVektor(2,2,0), mtl_rot, 1);
-
-        //szene->kugelHinzufuegen(TVektor(10,-10,10), mtl_leuchte, 0.5);
     }
 
     void Run(){
