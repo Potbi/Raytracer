@@ -15,18 +15,18 @@
 #include "szene.h"
 #include "material.h"
 
-Material material(Weiss,0,1);
-
 Kamera* kamera;
 Szene* szene;
+
+int totalpx;
 
 class TUser : public TPlan {
     float abs(float zahl){
         return((zahl > 0) ? zahl : -zahl);
     }
-    float parralelitaetZweiVektoren(TVektor a, TVektor b){
+    float parallelitaetZweiVektoren(TVektor a, TVektor b){
                 // winkel zwischen Vektoren von 0-1
-                // 1= Parralel 0= Orthogonal
+                // 1 = Parallel, 0 = Orthogonal
                 float top;
                 float bottom;
                 top = a*b;
@@ -50,15 +50,15 @@ class TUser : public TPlan {
             //szene.objekte[i]->schnitt(s);
             if ((s2.entfernung > 0)&&(s2.entfernung < abstandMin)){
                 abstandMin=s2.entfernung;
-                std::cout<<"("<<s2.richtung[0]<<","<<s2.richtung[1]<<","<<s2.richtung[2]<<")\n";
+                //std::cout<<"("<<s2.richtung[0]<<","<<s2.richtung[1]<<","<<s2.richtung[2]<<")\n";
                 s_treffer = Strahl(s2); // ACHTUNG
-                std::cout<<"("<<s_treffer.richtung[0]<<","<<s_treffer.richtung[1]<<","<<s_treffer.richtung[2]<<")\n";
+                //std::cout<<"("<<s_treffer.richtung[0]<<","<<s_treffer.richtung[1]<<","<<s_treffer.richtung[2]<<")\n";
                 gewinner = i;
 
             }
 
         }
-        // Wenn kein Objekt getroffen wurde, Hintergrundfarbe der Szene zur�ckgeben.
+        // Wenn kein Objekt getroffen wurde, Hintergrundfarbe der Szene zurueckgeben.
         TVektor lambertian = szene.hintergrund;
         TVektor reflection = NULL;
 
@@ -81,7 +81,7 @@ class TUser : public TPlan {
                         float parral;
                         std::cout<<"("<<lichtstrahl2.richtung[0]<<","<<lichtstrahl2.richtung[1]<<","<<lichtstrahl2.richtung[2]<<")\n";
                         std::cout<<"("<<s.normale[0]<<","<<s.normale[1]<<","<<s.normale[2]<<")\n";
-                        parral = parralelitaetZweiVektoren(lichtstrahl2.richtung, s.normale);
+                        parral = parallelitaetZweiVektoren(lichtstrahl2.richtung, s.normale);
                         beleuchtung += (parral - 1) * -1;
                     }
                 }
@@ -105,10 +105,6 @@ class TUser : public TPlan {
                 reflection = berechneFarbe(szene,reflektionsStrahl,iteration-1);
             }
 
-            // Farbbeitr�ge mischen:
-                // TColor farbe;
-                // farbe = szene.objekte[gewinner]->material->reflekt * reflection + ... * lambertian
-                // return farbe;
             if (szene.objekte[gewinner]->material.reflekt > 0){
                 return szene.objekte[gewinner]->material.reflekt * reflection + lambertian * (1-szene.objekte[gewinner]->material.reflekt);
             }
@@ -139,8 +135,8 @@ class TUser : public TPlan {
         TVektor blick(-7,7,-7);
         TVektor oben(-7,7,7);
 
-        const int XAUFL = 1;
-        const int YAUFL = 1;
+        const int XAUFL = 20;
+        const int YAUFL = 20;
         const float BRENN = 5;
 
         kamera = new Kamera(kam_pos, blick, oben, XAUFL, YAUFL, BRENN);
@@ -160,6 +156,8 @@ class TUser : public TPlan {
                 TVektor f = berechneFarbe(*szene, kamera->gibStrahl(x,y), 7);
                 TColor farbe(RGB(f[0],f[1],f[2]));
                 SetPixel(x,y,farbe);
+                totalpx++;
+                Busy = PlanString("Fortschritt: ") + 100*totalpx/(kamera->aufloesungX*kamera->aufloesungY) + PlanString(" %");
             }
         }
     }

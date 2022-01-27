@@ -15,9 +15,10 @@ public:
     // Konstruktoren
     Strahl();
     Strahl(TVektor ursprung, TVektor richtung);
+    //Strahl(Strahl s);                               // Kopierkonstruktor
 
     // Member-Funktionen
-    Strahl operator=(Strahl s);
+    Strahl& operator=(Strahl s);
 
 private:
 

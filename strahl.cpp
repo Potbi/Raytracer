@@ -1,4 +1,5 @@
 #include "strahl.h"
+#include <iostream>
 //#include <limits>
 
 Strahl::Strahl(){
@@ -19,12 +20,14 @@ Strahl::Strahl(TVektor ursprung, TVektor richtung){
     this->normale = NULL;
 }
 
-Strahl Strahl:: operator=(Strahl s){
-    Strahl s2(s.ursprung, s.richtung);
-    s2.entfernung = s.entfernung;
-    s2.schnittpunkt = s.schnittpunkt;
-    s2.normale = s.normale;
-    return s2;
+Strahl& Strahl::operator=(Strahl s){
+    // Zuweisung durch Copy-and-Swap Mechanismus.
+    std::swap(this->ursprung,s.ursprung);
+    std::swap(this->richtung,s.richtung);
+    std::swap(this->entfernung,s.entfernung);
+    std::swap(this->schnittpunkt,s.schnittpunkt);
+    std::swap(this->normale,s.normale);
+    return *this;
 }
 
 
