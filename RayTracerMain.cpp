@@ -64,13 +64,15 @@ class TUser : public TPlan {
                 if (szene.objekte[i]->material.emission > 0){
                     // Objekt hat emmisionsmaterial
                     // Vektor der den schnittpunkt mit der lichtquelle verbindet
-                    TVektor richtung = szene.objekte[i]->position - s.schnittpunkt;
-                    Strahl lichtstrahl(s.schnittpunkt, richtung);
-                    Strahl lichtstrahl2(szene.objekte[i]->schnitt(lichtstrahl));
+
+                    TVektor richtung = szene.objekte[i]->position - s_treffer.schnittpunkt;
+                    Strahl lichtstrahl(s_treffer.schnittpunkt, richtung);
+                    Strahl lichtstrahl2 = szene.objekte[i]->schnitt(lichtstrahl);
+
                     if (lichtstrahl2.entfernung < Norm(richtung)){
                         // wenn schnittpunkt n�her dran als die aktuelle emmisionsquelle
                         float parral;
-                        parral = parallelitaetZweiVektoren(lichtstrahl2.richtung, s.normale);
+                        parral = parallelitaetZweiVektoren(lichtstrahl2.richtung, s_treffer.normale);
                         beleuchtung += parral;
                     }
                 }
@@ -90,13 +92,12 @@ class TUser : public TPlan {
                 reflektionsStrahl.richtung = s_treffer.richtung - 2 * (s_treffer.richtung * s_treffer.normale) * s_treffer.normale;
                 EinheitsVektor(reflektionsStrahl.richtung);
                 reflektionsStrahl.ursprung = s_treffer.schnittpunkt +0.01*reflektionsStrahl.richtung;
-                //std::cout<<"("<<reflektionsStrahl.ursprung[0]<<","<<reflektionsStrahl.ursprung[1]<<","<<reflektionsStrahl.ursprung[2]<<")\n";
-
                 // Farbe rekursiv mit reflektiertem Strahl berechnen:
                 reflection = berechneFarbe(szene,reflektionsStrahl,iteration-1);
             }
             // ### FARBBEITRAEGE MISCHEN ###
-            return lambertian;
+            float ref_anteil = szene.objekte[gewinner]->material.reflekt;
+            return reflection*ref_anteil+lambertian*(1-ref_anteil);
         }
         // Wenn kein Objekt geschnitten wurde, Hintergrundfarbe zurueckgeben.
         TColor hintergrund = hintergrundFarbe(s.richtung[2],-1,1);
@@ -131,8 +132,8 @@ class TUser : public TPlan {
         TVektor blick(-7,7,-7);
         TVektor oben(-7,7,7);
 
-        const int XAUFL = 100;
-        const int YAUFL = 100;
+        const int XAUFL = 480;
+        const int YAUFL = 360;
         const float BRENN = 4;
 
         kamera = new Kamera(kam_pos, blick, oben, XAUFL, YAUFL, BRENN);
