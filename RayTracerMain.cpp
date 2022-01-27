@@ -19,30 +19,66 @@ Szene* szene;
 
 class TUser : public TPlan {
 
-    TColor berechneFarbe(Szene szene, Strahl s, int iteration){
+    float parralelitaetZweiVektoren(TVektor a, TVektor b){
+                // winkel zwischen Vektoren von 0-1
+                // 1= Parralel 0= Orthogonal
+                float top;
+                float bottom;
+                top = a*b;
+                bottom = Norm(a)*Norm(b);
+                float temp = top/bottom;
+                return sqrt(temp*temp);
+    }
 
+    TColor berechneFarbe(Szene szene, Strahl s){
         // Abbruchbedingung Rekursion: wenn maximale Anzahl Strahlen erreicht -> keinen Farbbeitrag mehr ermitteln.
         if (iteration == 0) return Schwarz;
+        Strahl s_treffer;
 
         // Strahl mit der Szene schneiden und vorderstes Schnittobjekt mit Index i ermitteln.
         float abstand;
         float abstandMin  = std::numeric_limits<float>::infinity();
         int gewinner = -1;
         for(int i=0; i<szene.anzObjekte; i++){
-            abstand = szene.objekte[i]->schnitt(s).entfernung;
-            if ((abstand > 0)&&(abstand < abstandMin)){
-                abstandMin = abstand;
+            s = szene.objekte[i]->schnitt(s);
+            if ((s.entfernung > 0)&&(s.entfernung < abstandMin)){
+                abstandMin=s.entfernung;
+                s_treffer = s;
                 gewinner = i;
             }
         }
 
+        TVektor lambertian = TVektor(0,0,0);
+        TVektor reflection;
+
         // Wenn ein Objekt geschnitten wurde, den Farbbeitrag nach Shading-Modellen ermitteln
         if (gewinner >=0){
             // Schnittinformationen speichern.
-            s = szene.objekte[gewinner]->schnitt(s);
+            s = s_treffer;
+            // # Lambertian Shading: ....
+            float beleuchtung = 0;
+            for(int i=0; i<szene.anzObjekte; i++){
+                if (szene.objekte[i]->material.emission > 0){
+                    // Objekt hat emmisionsmaterial
+                    // Vektor der den schnittpunkt mit der lichtquelle verbindet
+                    TVektor richtung = szene.objekte[i]->position - s.schnittpunkt;
+                    Strahl lichtstrahl(s_treffer.schnittpunkt, richtung);
+                    lichtstrahl = szene.objekte[i]->schnitt(lichtstrahl);
+                    if (lichtstrahl.entfernung < Norm(richtung)){
+                        // wenn schnittpunkt nï¿½her dran als die aktuelle emmisionsquelle
+                        float parralelitaet;
+                        parral = parralelitaetZweiVektoren(lichtstrahl.richtung, s_treffer.normale);
+                        beleuchtung += (parral - 1) * -1;
+                    }
+                }
+            }
+            int r = int(GetRValue(cszene.objekte[gewinner]->material.farbe));
+            int g = int(GetGValue(cszene.objekte[gewinner]->material.farbe));
+            int b = int(GetBValue(cszene.objekte[gewinner]->material.farbe));
+            if (beleuchtung > 1){beleuchtung = 1}
+            lambertian = TVektor(r,g,b) * beleuchtung;
+        }
 
-            // Lambertian Shading:
-            TVektor lambertian;
 
             // Reflection Shading (nur, wenn Material reflektierend):
             if (szene.objekte[gewinner]->material->reflekt > 0){
@@ -56,13 +92,13 @@ class TUser : public TPlan {
                 reflection = berechneFarbe(szene,reflektionsStrahl,iteration-1);
             }
 
-            // Farbbeiträge mischen:
+            // Farbbeitrï¿½ge mischen:
                 // TColor farbe;
                 // farbe = szene.objekte[gewinner]->material->reflekt * reflection + ... * lambertian
                 // return farbe;
         }
 
-        // Wenn kein Objekt getroffen wurde, Hintergrundfarbe der Szene zurückgeben.
+        // Wenn kein Objekt getroffen wurde, Hintergrundfarbe der Szene zurï¿½ckgeben.
         return szene.hintergrund;
     }
 
@@ -95,7 +131,7 @@ class TUser : public TPlan {
         szene = new Szene();
         szene->kugelHinzufuegen(TVektor(0,0,0), Rot, 0.5);
     }
-    
+
     void Run(){
         // Durch jeden Pixel iterieren.
         for (int x=0; x<kamera->aufloesungX; x++){

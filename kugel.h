@@ -3,6 +3,7 @@
 
 #include "strahl.h"
 #include "plan.h"
+#include "material.h"
 
 class Kugel{
 private:
@@ -11,12 +12,12 @@ public:
     // Member-Variablen
     TVektor position;
     float radius;
-    TColor farbe;
+    Material material;
     
     // Konstruktoren
     Kugel();
-    Kugel(TVektor position, TColor farbe, float radius);
-    Kugel(float x, float y, float z, TColor farbe, float radius);
+    Kugel(TVektor position, Material material, float radius);
+    Kugel(float x, float y, float z, Material material, float radius);
 
     // Member-Funktionen
     float schnitt(Strahl s);
