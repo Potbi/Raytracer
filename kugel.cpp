@@ -28,7 +28,7 @@ Strahl Kugel::schnitt(Strahl s){
     Strahl ergebnis;
     if (Norm(s.richtung)==0){
         // Richtung des Schnittstrahls darf nicht 0 sein.
-        ergebnis.entfernung = -1;
+        s.entfernung = -1;
     }
     else {
         // quadratische Gleichung l�sen
@@ -37,7 +37,7 @@ Strahl Kugel::schnitt(Strahl s){
 
         // Fallunterscheidung Wurzelterm
         float diskriminante = (p*p)/4 - q;
-        if (diskriminante < 0)  ergebnis.entfernung = -1;
+        if (diskriminante < 0)  s.entfernung = -1;
         if (diskriminante >= 0) {
             float t1 = -p/2 + sqrt(diskriminante);
             float t2 = -p/2 - sqrt(diskriminante);
