@@ -95,8 +95,9 @@ class TUser : public TPlan {
             // Reflection Shading (nur, wenn Material reflektierend):
             if (szene.objekte[gewinner]->material.reflekt > 0){
                 // Strahl reflektieren (Einfallswinkel = Ausfallswinkel).
-                Strahl reflektionsStrahl;        
+                Strahl reflektionsStrahl;
                 reflektionsStrahl.richtung = s_treffer.richtung - 2 * (s_treffer.richtung * s_treffer.normale) * s_treffer.normale;
+                EinheitsVektor(reflektionsStrahl.richtung);
                 reflektionsStrahl.ursprung = s_treffer.schnittpunkt+0.01*reflektionsStrahl.richtung;
 
                 // Farbe rekursiv mit reflektiertem Strahl berechnen:
@@ -105,7 +106,9 @@ class TUser : public TPlan {
             }
 
             if (szene.objekte[gewinner]->material.reflekt > 0){
-                return szene.objekte[gewinner]->material.reflekt * reflection + lambertian * (1-szene.objekte[gewinner]->material.reflekt);
+                //return szene.objekte[gewinner]->material.reflekt * reflection + lambertian * (1-szene.objekte[gewinner]->material.reflekt);
+                std::cout<<"("<<reflection[0]<<","<<reflection[1]<<","<<reflection[2]<<")\n";
+                return reflection;
             }
             else{
                 return lambertian;
@@ -134,21 +137,20 @@ class TUser : public TPlan {
         TVektor blick(-7,0,0);
         TVektor oben(0,7,0);
 
-        const int XAUFL = 300;
-        const int YAUFL = 300;
+        const int XAUFL = 200;
+        const int YAUFL = 200;
         const float BRENN = 1;
 
         kamera = new Kamera(kam_pos, blick, oben, XAUFL, YAUFL, BRENN);
 
         // Szene initialisieren.
         szene = new Szene();
-        szene->hintergrund = Rot;
         Material mtl_rot(Rot, 0, 0);
         Material mtl_spiegel(Rot, 1, 0);
         Material mtl_leuchte(Weiss, 0, 1);
         szene->kugelHinzufuegen(TVektor(0,0,2), mtl_rot, 2);
         szene->kugelHinzufuegen(TVektor(0,0,-2), mtl_spiegel, 2);
-        szene->kugelHinzufuegen(oben, mtl_leuchte, 0.5);
+        szene->kugelHinzufuegen(oben*100, mtl_leuchte, 300);
     }
 
     void Run(){
