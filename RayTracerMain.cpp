@@ -129,13 +129,13 @@ class TUser : public TPlan {
 
     void Init(){
         // Kamera initialisieren.
-        TVektor kam_pos(7,-7,7);
-        TVektor blick(-7,7,-7);
-        TVektor oben(-7,7,7);
+        TVektor kam_pos(7,0,0);
+        TVektor blick(-1,0,0);
+        TVektor oben(0,0,1);
 
         const int XAUFL = 480/2;
         const int YAUFL = 360/2;
-        const float BRENN = 4;
+        const float BRENN = 2;
 
         kamera = new Kamera(kam_pos, blick, oben, XAUFL, YAUFL, BRENN);
 
@@ -144,9 +144,10 @@ class TUser : public TPlan {
         Material mtl_rot(Rot, 0.05, 0);
         Material mtl_s(Rot, 1, 0);
         Material mtl_leuchte(Weiss, 1, 1);
-        szene->kugelHinzufuegen(TVektor(0,0,0), mtl_s, 1);
-        szene->kugelHinzufuegen(TVektor(0,0,10), mtl_leuchte, 1);
-        szene->kugelHinzufuegen(TVektor(2,2,0), mtl_rot, 1);
+        szene->kugelHinzufuegen(TVektor(0,-3,0), mtl_s, 1);
+        szene->kugelHinzufuegen(TVektor(0,10,0), mtl_leuchte, 3);
+        szene->kugelHinzufuegen(TVektor(0,2,0), mtl_rot, 1.4);
+        szene->kugelHinzufuegen(TVektor(0,0,0), mtl_rot, 0.3);
     }
 
     void Run(){
