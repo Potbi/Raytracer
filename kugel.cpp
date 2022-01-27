@@ -1,25 +1,26 @@
 #include "kugel.h"
+#include "material.h"
 #include <iostream>
 
 Kugel::Kugel() {
     // Standardkonstruktor
     TVektor null(3);
-    this->position = null;
-	this->farbe = Weiss;
+        this->position = null;
+	this->material = material(weiss,0,1);
 	this->radius = 0;
 }
 
-Kugel::Kugel(TVektor position, TColor farbe, float radius){
+Kugel::Kugel(TVektor position, Material material, float radius){
     // Konstruktor mit position als TVektor
 	this->position = position;
-	this->farbe = farbe;
+	this->material = material;
 	this->radius = radius;
 }
 
-Kugel::Kugel(float x, float y, float z, TColor farbe, float radius){
+Kugel::Kugel(float x, float y, float z, Material material, float radius){
     // Konstruktor mit position als Parameter x, y, z
 	this->position = TVektor(x,y,z);
-	this->farbe = farbe;
+        this->material = material;
 	this->radius = radius;
 }
 

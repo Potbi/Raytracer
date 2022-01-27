@@ -8,6 +8,9 @@ public:
     // Member-Variablen
     TVektor ursprung;
     TVektor richtung;
+    float entfernung;
+    TVektor schnittpunkt;
+    TVektor normale;
 
     // Konstruktoren
     Strahl();
