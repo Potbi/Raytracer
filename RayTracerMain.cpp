@@ -72,18 +72,18 @@ class TUser : public TPlan {
                     }
                 }
             }
-            int r = int(GetRValue(cszene.objekte[gewinner]->material.farbe));
-            int g = int(GetGValue(cszene.objekte[gewinner]->material.farbe));
-            int b = int(GetBValue(cszene.objekte[gewinner]->material.farbe));
-            if (beleuchtung > 1){beleuchtung = 1}
+            int r = int(GetRValue(szene.objekte[gewinner]->material.farbe));
+            int g = int(GetGValue(szene.objekte[gewinner]->material.farbe));
+            int b = int(GetBValue(szene.objekte[gewinner]->material.farbe));
+            if (beleuchtung > 1){beleuchtung = 1;}
             lambertian = TVektor(r,g,b) * beleuchtung;
 
 
             // Reflection Shading (nur, wenn Material reflektierend):
-            if (szene.objekte[gewinner]->material->reflekt > 0){
+            if (szene.objekte[gewinner]->material.reflekt > 0){
                 // Strahl reflektieren (Einfallswinkel = Ausfallswinkel).
                 Strahl reflektionsStrahl;        
-                reflektionsStrahl.richtung = s.richtung - 2 * (s.richtung * s.normal) * s.normal;
+                reflektionsStrahl.richtung = s.richtung - 2 * (s.richtung * s.normale) * s.normale;
                 reflektionsStrahl.ursprung = s.schnittpunkt+0.01*reflektionsStrahl.richtung;
 
                 // Farbe rekursiv mit reflektiertem Strahl berechnen:
@@ -97,8 +97,8 @@ class TUser : public TPlan {
                 // return farbe;
         }
 
-        if (reflection != NULL){
-            return szene.objekte[gewinner]->material->reflekt * reflection + lambertian * (1-szene.objekte[gewinner]->material->reflekt)
+        if (szene.objekte[gewinner]->material.reflekt > 0){
+            return szene.objekte[gewinner]->material.reflekt * reflection + lambertian * (1-szene.objekte[gewinner]->material.reflekt);
         }
         else{
             return lambertian;
