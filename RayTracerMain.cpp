@@ -33,7 +33,6 @@ class TUser : public TPlan {
         // gibt einen Wert zwischen [0, 1] zurück
         // als Mass fuer den Winkel zwischen zwei Vektoren
         return std::max(0.0, ((a*b)/(sqrt(a*a)*sqrt(b*b))) );
-        //return ((a*b)/(sqrt(a*a)*sqrt(b*b)));
     }
 
     TVektor berechneFarbe(Szene szene, Strahl s, int iteration){
@@ -153,26 +152,33 @@ class TUser : public TPlan {
 
     void Init(){
         // Kamera initialisieren.
-        TVektor kam_pos(7,0,7);
-        TVektor blick(-7,0,-7);
-        TVektor oben(7,0,-7);
+        TVektor kam_pos(3,0,2.5);
+        TVektor blick(0.965926,0.000000,-0.258819);
+        TVektor oben(-0.258819,0.000000,-0.965926);
 
-        const int XAUFL = 480;
-        const int YAUFL = 360;
-        const float BRENN = 1.5;
+        const int XAUFL = 720;
+        const int YAUFL = 480;
+        const float BRENN =1;
 
         kamera = new Kamera(kam_pos, blick, oben, XAUFL, YAUFL, BRENN);
 
         // Szene initialisieren.
         szene = new Szene();
-        Material mtl_rot(Rot, 0.05, 0);
-        Material mtl_s(Rot, 1, 0);
-        Material mtl_leuchte(Weiss, 0, 1);
-        szene->kugelHinzufuegen(TVektor(0,-3,0), mtl_s, 1);
-        szene->kugelHinzufuegen(TVektor(0,3,0), mtl_s, 1);
-        szene->kugelHinzufuegen(TVektor(0,0,5), mtl_leuchte, 0.1);
-        szene->kugelHinzufuegen(TVektor(0,0,0), mtl_rot, 1);
-        szene->kugelHinzufuegen(TVektor(0,0,2), mtl_rot, 0.4);
+        TColor Rosa = RGB(240,128,128);
+        TColor Orange = RGB(255,218,185);
+
+        Material erde(Weiss, 0, 0);
+        Material kugelA(Rosa, 0.2, 0);
+        Material kugelB(Orange, 0, 0);
+        Material metall(Weiss,0.9,0);
+        Material licht(Weiss, 0, 1.0);
+
+        szene->kugelHinzufuegen(TVektor(10,0,-1000), erde, 1000);
+        szene->kugelHinzufuegen(TVektor(6,1.5,4), licht, 0.01);
+        //szene->kugelHinzufuegen(TVektor(6,-1.5,4), licht, 0.2);
+        szene->kugelHinzufuegen(TVektor(10,-4,0.5), metall, 0.5);
+        szene->kugelHinzufuegen(TVektor(10,-1,1), kugelA, 1);
+        szene->kugelHinzufuegen(TVektor(10,2.5,1.5), kugelB, 1.5);
 
 
         // Einstellungen für Kachel-Rendern.
