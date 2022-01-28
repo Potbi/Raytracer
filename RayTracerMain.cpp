@@ -8,6 +8,7 @@
 #pragma hdrstop
 #include "Plan.h"
 #include <iostream>
+#include <time.h> 
 
 #include "strahl.h"
 #include "kugel.h"
@@ -43,13 +44,20 @@ class TUser : public TPlan {
         float abstand;
         float abstandMin  = std::numeric_limits<float>::infinity();
         int gewinner = -1;
+
+        
+
         for(int i=0; i<szene.anzObjekte; i++){
+
+                           
             s = szene.objekte[i]->schnitt(s);
             if ((s.entfernung > 0)&&(s.entfernung < abstandMin)){
                 abstandMin=s.entfernung;
                 gewinner = i;
             }
         }
+
+        
 
         // Wenn ein Objekt geschnitten wurde, den Farbbeitrag nach Shading-Modellen ermitteln
         if (gewinner >=0){
@@ -166,6 +174,8 @@ class TUser : public TPlan {
 
     void Run(){
         // Durch jeden Pixel iterieren.
+        double time1=0.0, tstart;       // time measurment variables
+        tstart = clock();               // start
         for (int x=0; x<kamera->aufloesungX; x++){
             for (int y=0; y<kamera->aufloesungY; y++){
                 TVektor f = berechneFarbe(*szene, kamera->gibStrahl(x,y), 3);
@@ -175,6 +185,9 @@ class TUser : public TPlan {
                 Busy = PlanString("Fortschritt: ") + 100*totalpx/(kamera->aufloesungX*kamera->aufloesungY) + PlanString(" %");
             }
         }
+        time1 += clock() - tstart;     // end
+        time1 = time1/CLOCKS_PER_SEC;  // rescale to seconds
+        std::cout << "  time = " << time1 << " sec. \n";
     }
 
 };
