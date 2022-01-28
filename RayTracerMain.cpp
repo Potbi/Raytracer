@@ -30,7 +30,7 @@ int rows, columns;
 class TUser : public TPlan {
 
     float cosBeta(TVektor a, TVektor b){
-        // gibt einen Wert zwischen [0, 1] zurück
+        // gibt einen Wert zwischen [0, 1] zurï¿½ck
         // als Mass fuer den Winkel zwischen zwei Vektoren
         return std::max(0.0, ((a*b)/(sqrt(a*a)*sqrt(b*b))) );
         //return ((a*b)/(sqrt(a*a)*sqrt(b*b)));
@@ -168,14 +168,17 @@ class TUser : public TPlan {
         Material mtl_rot(Rot, 0.05, 0);
         Material mtl_s(Rot, 1, 0);
         Material mtl_leuchte(Weiss, 0, 1);
+        Material mtl_leuchte2(Weiss, 0, 0.3);
         szene->kugelHinzufuegen(TVektor(0,-3,0), mtl_s, 1);
         szene->kugelHinzufuegen(TVektor(0,3,0), mtl_s, 1);
-        szene->kugelHinzufuegen(TVektor(0,0,5), mtl_leuchte, 0.1);
+        szene->kugelHinzufuegen(TVektor(0,-3,5), mtl_leuchte, 0.1);
+        szene->kugelHinzufuegen(TVektor(0,3,5), mtl_leuchte2, 0.1);
         szene->kugelHinzufuegen(TVektor(0,0,0), mtl_rot, 1);
         szene->kugelHinzufuegen(TVektor(0,0,2), mtl_rot, 0.4);
 
 
-        // Einstellungen für Kachel-Rendern.
+        std::cout<<szene->objekte[1]->radius;
+        // Einstellungen fï¿½r Kachel-Rendern.
         tilesize = 40;
         currenttile = 0;
         columns = ceil((float)kamera->aufloesungX/tilesize);

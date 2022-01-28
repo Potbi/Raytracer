@@ -1,11 +1,13 @@
 #ifndef KUGEL_H
 #define KUGEL_H
 
+
 #include "strahl.h"
 #include "plan.h"
 #include "material.h"
+#include "primitiv.h"
 
-class Kugel{
+class Kugel : public Primitiv{
 private:
 
 public:

@@ -25,7 +25,6 @@ Kugel::Kugel(float x, float y, float z, Material material, float radius){
 }
 
 Strahl Kugel::schnitt(Strahl s){
-    Strahl ergebnis;
     if (Norm(s.richtung)==0){
         // Richtung des Schnittstrahls darf nicht 0 sein.
         s.entfernung = -1;

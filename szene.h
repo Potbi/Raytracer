@@ -1,6 +1,7 @@
 #ifndef SZENE_H
 #define SZENE_H
 
+#include "primitiv.h"
 #include "kugel.h"
 #include <vector>
 
@@ -9,7 +10,7 @@ class Szene {
 	public:
 		// Member-Variablen
                 int anzObjekte;
-                std::vector<Kugel*> objekte;
+                std::vector<Primitiv*> objekte;
 
                 TColor hintergrund;
 
