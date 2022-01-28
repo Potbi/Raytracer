@@ -15,6 +15,10 @@
 #include "szene.h"
 #include "material.h"
 
+#include <time.h>
+
+clock_t start, finish;
+
 Kamera* kamera;
 Szene* szene;
 
@@ -24,20 +28,6 @@ int currenttile;
 int rows, columns;
 
 class TUser : public TPlan {
-    float abs(float zahl){
-        return((zahl > 0) ? zahl : -zahl);
-    }
-    float parallelitaetZweiVektoren(TVektor a, TVektor b){
-                // winkel zwischen Vektoren von 0-1
-                // 1 = Parallel, 0 = Orthogonal
-                float top;
-                float bottom;
-                top = a*b;
-                bottom = Norm(a)*Norm(b);
-                float temp = (top/bottom>0 ? top/bottom : 0);
-                //std::cout << temp;
-                return abs(temp);
-    }
 
     float cosBeta(TVektor a, TVektor b){
         // gibt einen Wert zwischen [0, 1] zurück
@@ -163,33 +153,26 @@ class TUser : public TPlan {
 
     void Init(){
         // Kamera initialisieren.
-        TVektor kam_pos(3,0,2.5);
-        TVektor blick(0.965926,0.000000,-0.258819);
-        TVektor oben(-0.258819,0.000000,-0.965926);
+        TVektor kam_pos(7,0,7);
+        TVektor blick(-7,0,-7);
+        TVektor oben(7,0,-7);
 
         const int XAUFL = 480;
         const int YAUFL = 360;
-        const float BRENN =1;
+        const float BRENN = 1.5;
 
         kamera = new Kamera(kam_pos, blick, oben, XAUFL, YAUFL, BRENN);
 
         // Szene initialisieren.
         szene = new Szene();
-        TColor Rosa = RGB(240,128,128);
-        TColor Orange = RGB(255,218,185);
-
-        Material erde(Weiss, 0, 0);
-        Material kugelA(Rosa, 0.2, 0);
-        Material kugelB(Orange, 0, 0);
-        Material metall(Weiss,0.9,0);
-        Material licht(Weiss, 0, 1.0);
-
-        szene->kugelHinzufuegen(TVektor(10,0,-1000), erde, 1000);
-        szene->kugelHinzufuegen(TVektor(6,1.5,4), licht, 0.01);
-        //szene->kugelHinzufuegen(TVektor(6,-1.5,4), licht, 0.2);
-        szene->kugelHinzufuegen(TVektor(10,-4,0.5), metall, 0.5);
-        szene->kugelHinzufuegen(TVektor(10,-1,1), kugelA, 1);
-        szene->kugelHinzufuegen(TVektor(10,2.5,1.5), kugelB, 1.5);
+        Material mtl_rot(Rot, 0.05, 0);
+        Material mtl_s(Rot, 1, 0);
+        Material mtl_leuchte(Weiss, 0, 1);
+        szene->kugelHinzufuegen(TVektor(0,-3,0), mtl_s, 1);
+        szene->kugelHinzufuegen(TVektor(0,3,0), mtl_s, 1);
+        szene->kugelHinzufuegen(TVektor(0,0,5), mtl_leuchte, 0.1);
+        szene->kugelHinzufuegen(TVektor(0,0,0), mtl_rot, 1);
+        szene->kugelHinzufuegen(TVektor(0,0,2), mtl_rot, 0.4);
 
 
         // Einstellungen für Kachel-Rendern.
@@ -200,7 +183,19 @@ class TUser : public TPlan {
     }
 
     void Run(){
+        // Laufzeitmessung starten
+        if (currenttile == 0) {
+            start = clock();
+        }
+
+        // aktuelle Kachel rendern
         CallRun = renderTile(currenttile);
+
+        // Laufzeitmessung beenden
+        if (currenttile == (columns * rows)) {
+            finish = clock();
+            Busy = PlanString("Fertig nach ") + ((double)(finish - start))/CLOCKS_PER_SEC + PlanString(" s.");
+        }
     }
 
     float min(float a, float b){
