@@ -10,7 +10,7 @@ class Szene {
 	public:
 		// Member-Variablen
                 int anzObjekte;
-                std::vector<Primitiv*> objekte;
+                std::vector<Primitiv> objekte;
 
                 TColor hintergrund;
 

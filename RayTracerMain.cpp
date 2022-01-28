@@ -45,7 +45,7 @@ class TUser : public TPlan {
         float abstandMin  = std::numeric_limits<float>::infinity();
         int gewinner = -1;
         for(int i=0; i<szene.anzObjekte; i++){
-            s = szene.objekte[i]->schnitt(s);
+            s = szene.objekte[i].schnitt(s);
             if ((s.entfernung > 0)&&(s.entfernung < abstandMin)){
                 abstandMin=s.entfernung;
                 gewinner = i;
@@ -56,10 +56,10 @@ class TUser : public TPlan {
         if (gewinner >=0){
 
             // Schnittinformationen in s_treffer speichern.
-            Strahl s_treffer = szene.objekte[gewinner]->schnitt(s);
+            Strahl s_treffer = szene.objekte[gewinner].schnitt(s);
 
         // ### PUNKTLICHT-SHADER ###
-            if (szene.objekte[gewinner]->material.emission == 1){
+            if (szene.objekte[gewinner].getMaterial().emission == 1){
                 // reine Punktlichtquelle
             }
 
@@ -72,9 +72,9 @@ class TUser : public TPlan {
             for(int i=0; i<szene.anzObjekte; i++){
 
                 // Wenn Lichtquelle gefunden: ...
-                if (szene.objekte[i]->material.emission > 0){
+                if (szene.objekte[i].getMaterial().emission > 0){
                     // ... -> Lichtstrahl von Objekt zur Lichtquelle berechnen
-                    lichtstrahl.richtung = szene.objekte[i]->position - s_treffer.schnittpunkt;
+                    lichtstrahl.richtung = szene.objekte[i].getPosition() - s_treffer.schnittpunkt;
                     EinheitsVektor(lichtstrahl.richtung);
                     lichtstrahl.ursprung = s_treffer.schnittpunkt + 0.01*lichtstrahl.richtung;
 
@@ -84,7 +84,7 @@ class TUser : public TPlan {
                     for(int j=0; j<szene.anzObjekte; j++){
 
                         // den Lichtstrahl mit allen Objekten schneiden und Schnittinformationen speichern
-                        lichtstrahl = szene.objekte[j]->schnitt(lichtstrahl);
+                        lichtstrahl = szene.objekte[j].schnitt(lichtstrahl);
                         if ((lichtstrahl.entfernung > 0)&&(lichtstrahl.entfernung < abstandMin)){
                             abstandMin=lichtstrahl.entfernung;
                             gewinner_licht = j;
@@ -99,16 +99,16 @@ class TUser : public TPlan {
             }
 
 
-            int r = int(GetRValue(szene.objekte[gewinner]->material.farbe));
-            int g = int(GetGValue(szene.objekte[gewinner]->material.farbe));
-            int b = int(GetBValue(szene.objekte[gewinner]->material.farbe));
+            int r = int(GetRValue(szene.objekte[gewinner].getMaterial().farbe));
+            int g = int(GetGValue(szene.objekte[gewinner].getMaterial().farbe));
+            int b = int(GetBValue(szene.objekte[gewinner].getMaterial().farbe));
             if (beleuchtung > 1){beleuchtung = 1;}
             lambertian = TVektor(r,g,b) * beleuchtung;
 
 
             // ### REFLECTION SHADING ###
             TVektor reflection(0,0,0);
-            if (szene.objekte[gewinner]->material.reflekt > 0){
+            if (szene.objekte[gewinner].getMaterial().reflekt > 0){
                 // Strahl reflektieren (Einfallswinkel = Ausfallswinkel).
                 Strahl reflektionsStrahl;
                 reflektionsStrahl.richtung = s_treffer.richtung - 2 * (s_treffer.richtung * s_treffer.normale) * s_treffer.normale;
@@ -120,7 +120,7 @@ class TUser : public TPlan {
 
 
             // ### FARBBEITRAEGE MISCHEN ###
-            float ref_anteil = szene.objekte[gewinner]->material.reflekt;
+            float ref_anteil = szene.objekte[gewinner].getMaterial().reflekt;
             return (reflection*ref_anteil + lambertian*(1.0-ref_anteil));
         }
 
@@ -170,14 +170,14 @@ class TUser : public TPlan {
         Material mtl_leuchte(Weiss, 0, 1);
         Material mtl_leuchte2(Weiss, 0, 0.3);
         szene->kugelHinzufuegen(TVektor(0,-3,0), mtl_s, 1);
-        szene->kugelHinzufuegen(TVektor(0,3,0), mtl_s, 1);
+        //szene->kugelHinzufuegen(TVektor(0,3,0), mtl_s, 1);
         szene->kugelHinzufuegen(TVektor(0,-3,5), mtl_leuchte, 0.1);
-        szene->kugelHinzufuegen(TVektor(0,3,5), mtl_leuchte2, 0.1);
+        //szene->kugelHinzufuegen(TVektor(0,3,5), mtl_leuchte2, 0.1);
         szene->kugelHinzufuegen(TVektor(0,0,0), mtl_rot, 1);
         szene->kugelHinzufuegen(TVektor(0,0,2), mtl_rot, 0.4);
 
 
-        std::cout<<szene->objekte[1]->radius;
+        //std::cout<<szene->objekte[1]->radius;
         // Einstellungen f�r Kachel-Rendern.
         tilesize = 40;
         currenttile = 0;

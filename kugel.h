@@ -5,9 +5,9 @@
 #include "strahl.h"
 #include "plan.h"
 #include "material.h"
-#include "primitiv.h"
+//#include "primitiv.h"
 
-class Kugel : public Primitiv{
+class Kugel{
 private:
 
 public:
@@ -23,6 +23,7 @@ public:
 
     // Member-Funktionen
     Strahl schnitt(Strahl s);
+    Kugel& operator=(Kugel k);
 };
 
 #endif

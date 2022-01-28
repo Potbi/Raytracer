@@ -40,8 +40,6 @@ Strahl Kugel::schnitt(Strahl s){
         if (diskriminante >= 0) {
             float t1 = -p/2 + sqrt(diskriminante);
             float t2 = -p/2 - sqrt(diskriminante);
-            //ergebnis.position = s.position;
-            //ergebnis.richtung = s.richtung;
             s.entfernung = ((abs(t1) < abs(t2)) ? t1 : t2);
             s.schnittpunkt = s.ursprung + s.richtung*s.entfernung;
             s.normale = s.schnittpunkt - this->position;
@@ -49,6 +47,14 @@ Strahl Kugel::schnitt(Strahl s){
     }
 
     return s;
+}
+
+Kugel& Kugel::operator=(Kugel k){
+    // Zuweisung durch Copy-and-Swap Mechanismus.
+    std::swap(this->position, k.position);
+    std::swap(this->radius, k.radius);
+    std::swap(this->material, k.material);
+    return *this;
 }
 
 float abs(float zahl){
