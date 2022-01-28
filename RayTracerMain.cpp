@@ -44,9 +44,9 @@ class TUser : public TPlan {
         float abstandMin  = std::numeric_limits<float>::infinity();
         int gewinner = -1;
         for(int i=0; i<szene.anzObjekte; i++){
-            abstand = szene.objekte[i]->schnitt(s).entfernung;
-            if ((abstand > 0)&&(abstand < abstandMin)){
-                abstandMin=abstand;
+            s = szene.objekte[i]->schnitt(s);
+            if ((s.entfernung > 0)&&(s.entfernung < abstandMin)){
+                abstandMin=s.entfernung;
                 gewinner = i;
             }
         }
@@ -66,15 +66,28 @@ class TUser : public TPlan {
                     // Vektor der den schnittpunkt mit der lichtquelle verbindet
 
                     TVektor richtung = szene.objekte[i]->position - s_treffer.schnittpunkt;
-                    Strahl lichtstrahl(s_treffer.schnittpunkt, richtung);
-                    Strahl lichtstrahl2 = szene.objekte[i]->schnitt(lichtstrahl);
+                    Strahl lichtstrahl(s_treffer.schnittpunkt+richtung*(-0.01), richtung);
 
-                    if (lichtstrahl2.entfernung < Norm(richtung)){
-                        // wenn schnittpunkt n�her dran als die aktuelle emmisionsquelle
-                        float parral;
-                        parral = parallelitaetZweiVektoren(lichtstrahl2.richtung, s_treffer.normale);
-                        beleuchtung += parral;
+                    abstandMin  = std::numeric_limits<float>::infinity();
+                    int gewinner_licht = -1;
+                    for(int j=0; j<szene.anzObjekte; j++){
+                        lichtstrahl = szene.objekte[j]->schnitt(lichtstrahl);
+                        if ((lichtstrahl.entfernung > 0)&&(lichtstrahl.entfernung < abstandMin)){
+                            abstandMin=lichtstrahl.entfernung;
+                            gewinner_licht = j;
+                        }
                     }
+
+                    if (gewinner_licht >= 0){
+                        //lichtstrahl = szene.objekte[gewinner_licht]->schnitt(lichtstrahl);
+                        if (szene.objekte[gewinner_licht]==szene.objekte[i]){
+                            // wenn schnittpunkt n�her dran als die aktuelle emmisionsquelle
+                            float parral;
+                            parral = parallelitaetZweiVektoren(lichtstrahl.richtung, s_treffer.normale);
+                            beleuchtung += parral;
+                        }
+                    }
+                    
                 }
             }
             int r = int(GetRValue(szene.objekte[gewinner]->material.farbe));
@@ -129,13 +142,13 @@ class TUser : public TPlan {
 
     void Init(){
         // Kamera initialisieren.
-        TVektor kam_pos(7,-7,7);
-        TVektor blick(-7,7,-7);
-        TVektor oben(-7,7,7);
+        TVektor kam_pos(7,0,7);
+        TVektor blick(-7,0,-7);
+        TVektor oben(7,0,-7);
 
-        const int XAUFL = 480/2;
-        const int YAUFL = 360/2;
-        const float BRENN = 4;
+        const int XAUFL = 480;
+        const int YAUFL = 360;
+        const float BRENN = 1.5;
 
         kamera = new Kamera(kam_pos, blick, oben, XAUFL, YAUFL, BRENN);
 
@@ -143,10 +156,12 @@ class TUser : public TPlan {
         szene = new Szene();
         Material mtl_rot(Rot, 0.05, 0);
         Material mtl_s(Rot, 1, 0);
-        Material mtl_leuchte(Weiss, 1, 1);
-        szene->kugelHinzufuegen(TVektor(0,0,0), mtl_s, 1);
-        szene->kugelHinzufuegen(TVektor(0,0,10), mtl_leuchte, 1);
-        szene->kugelHinzufuegen(TVektor(2,2,0), mtl_rot, 1);
+        Material mtl_leuchte(Weiss, 0, 1);
+        szene->kugelHinzufuegen(TVektor(0,-3,0), mtl_s, 1);
+        szene->kugelHinzufuegen(TVektor(0,3,0), mtl_s, 1);
+        szene->kugelHinzufuegen(TVektor(0,0,5), mtl_leuchte, 0.1);
+        szene->kugelHinzufuegen(TVektor(0,0,0), mtl_rot, 1);
+        szene->kugelHinzufuegen(TVektor(0,0,2), mtl_rot, 0.4);
     }
 
     void Run(){
