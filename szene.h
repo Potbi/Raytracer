@@ -22,6 +22,7 @@ class Szene {
 
 		// Member-Funktionen
 		void kugelHinzufuegen (TVektor position, Material material, float radius);
+                void DreieckHinzufuegen (TVektor punktA, TVektor punktB, TVektor punktC, Material material);
 };
 #endif
 

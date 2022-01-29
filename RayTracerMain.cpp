@@ -9,6 +9,7 @@
 #include "Plan.h"
 #include <iostream>
 
+#include "dreieck.h"
 #include "strahl.h"
 #include "kugel.h"
 #include "kamera.h"
@@ -175,6 +176,7 @@ class TUser : public TPlan {
         //szene->kugelHinzufuegen(TVektor(0,3,5), mtl_leuchte2, 0.1);
         szene->kugelHinzufuegen(TVektor(0,0,0), mtl_rot, 1);
         szene->kugelHinzufuegen(TVektor(0,0,2), mtl_rot, 0.4);
+        szene->DreieckHinzufuegen(TVektor(5,0,0),TVektor(0,5,0),TVektor(-5,0,0),mtl_rot);
 
 
         //std::cout<<szene->objekte[1]->radius;
