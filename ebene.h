@@ -11,7 +11,7 @@ private:
 	// Member-Variablen
 	TVektor normal;
 	TMatrix transform;
-	int kachelgroesse;
+	float kachelgroesse;
     Material materialA;
 	Material materialB;
 

@@ -52,16 +52,12 @@
             Strahl s_treffer = szene.objekte[gewinner]->schnitt(s);
 
         // ### PUNKTLICHT-SHADER ###
-            if (szene.objekte[gewinner]->material.emission == 1){
-                // reine Punktlichtquelle
-            }
 
         // ### LAMBERTIAN SHADING ###
             TVektor lambertian;
             float beleuchtung = 0.1;
             Strahl lichtstrahl;
 
-            // Lichtquellen suchen
             for(int i=0; i<szene.anzLichter; i++){
                 // ... -> Lichtstrahl von Objekt zur Lichtquelle berechnen
                 lichtstrahl.richtung = szene.lichter[i]->position - s_treffer.schnittpunkt;

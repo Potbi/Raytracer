@@ -8,12 +8,11 @@ class Material {
 		// Member-Variablen
         TColor farbe;
         float reflekt;
-        float emission;
 
 
 		// Konstruktoren
         Material();
-        Material(TColor farbe, float reflekt, float emission);
+        Material(TColor farbe, float reflekt);
 
 
 };

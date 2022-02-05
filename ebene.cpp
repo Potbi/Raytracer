@@ -20,45 +20,55 @@ Ebene::Ebene(TVektor eckpunkt, TVektor a, TVektor b, float breite, float laenge,
 	EinheitsVektor(this->normal);
 	this->b = cross(this->normal,this->a);
 	EinheitsVektor(this->b);
+
 	// Transformationsmatrix von Ebene -> Welt
-	this->transform = 	TMatrix(this->a[0],this->b[0],this->normal[0],
-								this->a[1],this->b[1],this->normal[1],
-								this->a[2],this->b[2],this->normal[2]);
-	// die Ruecktransformation (Welt -> Ebene) ist die Transponierte
-	this->transform = this->transform^"t";
+    this->transform = TMatrix(2,3);
+    this->transform(0,0) = this->a(0);
+    this->transform(0,1) = this->a(1);
+    this->transform(0,2) = this->a(2);
+    this->transform(1,0) = this->b(0);
+    this->transform(1,1) = this->b(1);
+    this->transform(1,2) = this->b(2);
+
+
+	//this->transform = TMatrix(this->a[0],this->b[0],this->normal[0],this->a[1],this->b[1],this->normal[1],this->a[2],this->b[2],this->normal[2]);
+
+
+	// Ruecktransformation Welt -> Ebene
+	//this->transform = this->transform^"t";
 	// z-Koordinate ist fuer Punkte in der Ebene 0 (dritte Zeile nicht benoetigt)
-	this->transform.Resize(2,3);
-	this->kachelgroesse = 2;
+	//this->transform.Resize(2,3);
+	this->kachelgroesse = 0.5;
 }
 
 
 Strahl Ebene::schnitt(Strahl s){
-	Strahl ergebnis;
 	EinheitsVektor(s.richtung);
     float zaehler = -((s.ursprung-this->eckpunkt)*this->normal);
     float nenner = (s.richtung*this->normal);
     // Schnittstrahl darf nicht parallel zur Ebene sein.
     if (nenner == 0){
-        ergebnis.entfernung = -1;
-		return(ergebnis);
+        s.entfernung = -1;
+		return(s);
     } else {
         // Schnittpunktberechnung mit Ebene.
-        ergebnis.entfernung = zaehler/nenner;
-        if (ergebnis.entfernung < 0){
+        s.entfernung = zaehler/nenner;
+        if (s.entfernung < 0){
 			// Schnittpunkte, die in negative Strahlrichtung liegen, werden ignoriert.
-            ergebnis.entfernung = -1;
-			return(ergebnis);
+            s.entfernung = -1;
+			return(s);
         } else {
             // Berechne Koordinaten des Schnittpunkts (in Weltkoordinaten).
-            ergebnis.schnittpunkt = TVektor(s.ursprung + ergebnis.entfernung * s.richtung);
+            s.schnittpunkt = TVektor(s.ursprung + s.entfernung * s.richtung);
 			// Transformation auf Ebenen-Koordinaten.
-			TVektor inEbene = this->transform * ergebnis.schnittpunkt;
-			if ((inEbene[0] < breite) && (inEbene[1] < laenge)){
-				ergebnis.normale = this->normal;
-				this->material = ((((int)inEbene[0]/kachelgroesse % 2) == ((int)inEbene[1]/kachelgroesse % 2)) ? materialA : materialB);
+			TVektor inEbene = this->transform * (s.schnittpunkt-this->eckpunkt);
+			if ((inEbene[0] < breite) && (inEbene[0] > 0) && (inEbene[1] > 0) && (inEbene[1] < laenge)){
+				s.normale = this->normal;
+				this->material = ((((int)(inEbene[0]/this->kachelgroesse) % 2) == ((int)(inEbene[1]/this->kachelgroesse) % 2)) ? materialA : materialB);
+                return(s);
 			} else {
-				ergebnis.entfernung = -1;
-				return(ergebnis);
+				s.entfernung = -1;
+				return(s);
 			}
 		}
 	}			
