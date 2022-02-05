@@ -4,7 +4,8 @@
   <MACROS>
     <VERSION value="BCB.06.00"/>
     <PROJECT value="RayTracer.exe"/>
-    <OBJFILES value="RayTracerMain.obj kamera.obj kugel.obj strahl.obj material.obj szene.obj"/>
+    <OBJFILES value="RayTracerMain.obj kamera.obj kugel.obj strahl.obj material.obj szene.obj 
+      ebene.obj licht.obj"/>
     <RESFILES value=""/>
     <DEFFILE value=""/>
     <RESDEPEN value="$(RESFILES)"/>
@@ -56,6 +57,8 @@
       <FILE FILENAME="material.h" FORMNAME="" UNITNAME="material.h" CONTAINERID="" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="szene.cpp" FORMNAME="" UNITNAME="szene" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="szene.h" FORMNAME="" UNITNAME="szene.h" CONTAINERID="" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="ebene.cpp" FORMNAME="" UNITNAME="ebene" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="licht.cpp" FORMNAME="" UNITNAME="licht" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
   </FILELIST>
   <BUILDTOOLS>
   </BUILDTOOLS>

@@ -20,35 +20,35 @@ Kugel::Kugel(TVektor position, Material material, float radius){
 Kugel::Kugel(float x, float y, float z, Material material, float radius){
     // Konstruktor mit position als Parameter x, y, z
 	this->position = TVektor(x,y,z);
-        this->material = material;
+    this->material = material;
 	this->radius = radius;
 }
 
 Strahl Kugel::schnitt(Strahl s){
-    Strahl ergebnis;
     if (Norm(s.richtung)==0){
         // Richtung des Schnittstrahls darf nicht 0 sein.
         s.entfernung = -1;
+        return(s);
     }
     else {
-        // quadratische Gleichung l�sen
+        // quadratische Gleichung loesen
         float p = 2 * (s.richtung*(s.ursprung - this->position)) / (s.richtung * s.richtung);
         float q = ((s.ursprung - this->position) * (s.ursprung - this->position) - (this->radius * this->radius)) / (s.richtung * s.richtung);
 
         // Fallunterscheidung Wurzelterm
         float diskriminante = (p*p)/4 - q;
-        if (diskriminante < 0)  s.entfernung = -1;
+        if (diskriminante < 0) {
+            s.entfernung = -1;
+            return(s);
+        }
         if (diskriminante >= 0) {
             float t1 = -p/2 + sqrt(diskriminante);
             float t2 = -p/2 - sqrt(diskriminante);
-            //ergebnis.position = s.position;
-            //ergebnis.richtung = s.richtung;
             s.entfernung = ((abs(t1) < abs(t2)) ? t1 : t2);
             s.schnittpunkt = s.ursprung + s.richtung*s.entfernung;
             s.normale = s.schnittpunkt - this->position;
         }
     }
-
     return s;
 }
 

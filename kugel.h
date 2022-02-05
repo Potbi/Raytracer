@@ -4,15 +4,15 @@
 #include "strahl.h"
 #include "plan.h"
 #include "material.h"
+#include "primitiv.h"
 
-class Kugel{
+class Kugel : public Primitiv {
 private:
 
 public:
     // Member-Variablen
     TVektor position;
     float radius;
-    Material material;
     
     // Konstruktoren
     Kugel();
