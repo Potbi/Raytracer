@@ -5,7 +5,7 @@
     <VERSION value="BCB.06.00"/>
     <PROJECT value="RayTracer.exe"/>
     <OBJFILES value="RayTracerMain.obj kamera.obj kugel.obj strahl.obj material.obj szene.obj 
-      primitiv.obj"/>
+      primitiv.obj dreieck.obj"/>
     <RESFILES value=""/>
     <DEFFILE value=""/>
     <RESDEPEN value="$(RESFILES)"/>
@@ -54,10 +54,9 @@
       <FILE FILENAME="kugel.cpp" FORMNAME="" UNITNAME="kugel.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="strahl.cpp" FORMNAME="" UNITNAME="strahl.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="material.cpp" FORMNAME="" UNITNAME="material" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="material.h" FORMNAME="" UNITNAME="material.h" CONTAINERID="" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="szene.cpp" FORMNAME="" UNITNAME="szene" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="szene.h" FORMNAME="" UNITNAME="szene.h" CONTAINERID="" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="primitiv.cpp" FORMNAME="" UNITNAME="primitiv" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="dreieck.cpp" FORMNAME="" UNITNAME="dreieck" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
   </FILELIST>
   <BUILDTOOLS>
   </BUILDTOOLS>
