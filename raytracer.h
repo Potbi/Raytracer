@@ -52,6 +52,7 @@
             Strahl s_treffer = szene.objekte[gewinner]->schnitt(s);
 
         // ### PUNKTLICHT-SHADER ###
+        //  
 
         // ### LAMBERTIAN SHADING ###
             TVektor lambertian;
@@ -73,7 +74,6 @@
                         verdeckt = true;
                     }
                 }
-
                 // wenn die aktuell untersuchte Lichtquelle das nahste Objekt ist, dann Beleuchtung ermitteln
                 if (!verdeckt) {
                     beleuchtung += cosBeta(lichtstrahl.richtung, s_treffer.normale);

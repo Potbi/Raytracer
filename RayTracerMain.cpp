@@ -40,30 +40,23 @@ class TUser : public TPlan {
 
         // Szene initialisieren.
         szene = new Szene();
-        TColor Rosa = RGB(240,128,128);
-        TColor Orange = RGB(255,218,185);
 
-        Material erde(Weiss, 0);
-        Material schwarz(Schwarz,0);
-        Material kugelA(Rot, 0.2);
-        Material kugelB(Blau, 0);
-        Material metall(Weiss,0.5);
+        TColor unirot = RGB(213,17,48);
+        Material mtl_weiss(Weiss, 0);
+        Material mtl_schwarz(Schwarz,0);
+        Material mtl_unirot(unirot,0);
+        Material mtl_metall(Weiss,0.9);
+
 
         // Licht
         szene->lichtHinzufuegen(TVektor(6,1.5,4), 1);
+
         // Geometrie
-        /*szene->kugelHinzufuegen(TVektor(10,0,-1000), erde, 1000);
-        szene->kugelHinzufuegen(TVektor(10,-4,0.5), metall, 0.5);
-        szene->kugelHinzufuegen(TVektor(10,-1,1), kugelA, 1);
-        szene->kugelHinzufuegen(TVektor(10,2.5,1.5), kugelB, 1.5);
-        */
-
         // Ebene mit Schachbrett
-        // Ebene(TVektor eckpunkt, TVektor a, TVektor b, float breite, float laenge, Material materialA, Material materialB)
-        szene->ebeneHinzufuegen(TVektor(5,2.5,0),TVektor(0,-1,0),TVektor(1,0,0),5,5,erde,schwarz);
-        szene->kugelHinzufuegen(TVektor(7,0,0.5), metall, 0.5);
+        szene->ebeneHinzufuegen(TVektor(5,2.5,0),TVektor(0,-1,0),TVektor(1,0,0),5,5,mtl_weiss,mtl_schwarz);
+        szene->ebeneHinzufuegen(TVektor(5,2.5,5),TVektor(0,0,-1),TVektor(1,0,0),5,5,mtl_weiss,mtl_schwarz);
 
-
+        szene->kugelHinzufuegen(TVektor(7,0,0.5), mtl_unirot, 0.5);
 
         // Einstellungen für Kachel-Rendern.
         tilesize = 40;
