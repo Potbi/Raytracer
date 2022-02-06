@@ -5,16 +5,14 @@
 #include "strahl.h"
 #include "plan.h"
 #include "material.h"
-//#include "primitiv.h"
+#include "primitiv.h"
 
-class Kugel{
+class Kugel:public Primitiv{
 private:
 
 public:
     // Member-Variablen
-    TVektor position;
     float radius;
-    Material material;
     
     // Konstruktoren
     Kugel();
@@ -22,7 +20,7 @@ public:
     Kugel(float x, float y, float z, Material material, float radius);
 
     // Member-Funktionen
-    Strahl schnitt(Strahl s);
+    virtual Strahl schnitt(Strahl s);
     Kugel& operator=(Kugel k);
 };
 

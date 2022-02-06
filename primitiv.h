@@ -1,8 +1,8 @@
 #ifndef PRIMITIV_H
 #define PRIMITIV_H
 
-#include "dreieck.h"
-#include "kugel.h"
+//#include "dreieck.h"
+//#include "kugel.h"
 #include "material.h"
 #include "strahl.h"
 #include "plan.h"
@@ -12,18 +12,17 @@ private:
 
 public:
     // Member-Variablen
-    Kugel kugel;
-    Dreieck dreieck;
-    // typ ist true wenn Primitiv eine Kugel ist und false wenn es ein Dreieck ist
-    bool typ;
+    //Kugel kugel;
+    //Dreieck dreieck;
+    TVektor position;
+	Material material;
     // Konstruktoren
-    Primitiv(TVektor position, Material material, float radius);//Kugel
-    Primitiv(TVektor punktA, TVektor punktB, TVektor punktC, Material material);//Dreieck
+    //Primitiv();
     //Primitiv(Material material);
     // Member-Funktionen
-    Strahl schnitt(Strahl s);
-    Material getMaterial();
-    TVektor getPosition();
+    virtual Strahl schnitt(Strahl s) = 0;
+    //virtual Material getMaterial();
+    //virtual TVektor getPosition();
 };
 
 #endif

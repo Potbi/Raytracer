@@ -4,8 +4,9 @@
 #include "material.h"
 #include "strahl.h"
 #include "plan.h"
+#include "primitiv.h"
 
-class Dreieck{
+class Dreieck:public Primitiv{
 	private:
 		float a;
 		float b;
@@ -17,15 +18,13 @@ class Dreieck{
 		TVektor punktA;
 		TVektor punktB;
 		TVektor punktC;
-		TVektor position;
         TVektor normal;
-		Material material;
 
 		// Konstruktoren
 		Dreieck ();
 		Dreieck (TVektor punktA, TVektor punktB, TVektor punktC, Material material);
 		//Methoden
-		Strahl schnitt(Strahl s);
+		virtual Strahl schnitt(Strahl s);
 		Dreieck& operator=(Dreieck d);
 };
 

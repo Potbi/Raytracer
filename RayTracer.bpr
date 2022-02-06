@@ -5,7 +5,7 @@
     <VERSION value="BCB.06.00"/>
     <PROJECT value="RayTracer.exe"/>
     <OBJFILES value="RayTracerMain.obj kamera.obj kugel.obj strahl.obj material.obj szene.obj 
-      primitiv.obj dreieck.obj"/>
+      dreieck.obj"/>
     <RESFILES value=""/>
     <DEFFILE value=""/>
     <RESDEPEN value="$(RESFILES)"/>
@@ -23,7 +23,7 @@
     <DEBUGLIBPATH value="$(BCB)\lib\debug"/>
     <RELEASELIBPATH value="$(BCB)\lib\release"/>
     <LINKER value="ilink32"/>
-    <USERDEFINES value=""/>
+    <USERDEFINES value="_DEBUG"/>
     <SYSDEFINES value="NO_STRICT"/>
     <MAINSOURCE value="RayTracer.bpf"/>
     <INCLUDEPATH value="&quot;C:\Program Files\Borland\CBuilder5\Projects&quot;;$(BCB)\include;$(BCB)\include\vcl"/>
@@ -32,12 +32,12 @@
     <OTHERFILES value=""/>
   </MACROS>
   <OPTIONS>
-    <CFLAG1 value="-O2 -H=c:\PROGRA~1\borland\CBUILD~1\lib\vcl60.csm -Hc -Vx -Ve -fp -X- -a8 
-      -6 -b- -k- -vi -tWC -tWM- -c"/>
-    <PFLAGS value="-$Y- -$L- -$D- -$A8 -v -JPHNE -M"/>
+    <CFLAG1 value="-Od -H=c:\PROGRA~1\borland\CBUILD~1\lib\vcl60.csm -Hc -Vx -Ve -fp -X- -r- 
+      -a8 -6 -b- -k -y -v -vi- -tWC -tWM- -c"/>
+    <PFLAGS value="-$Y+ -$W -$O- -$A8 -v -JPHNE -M"/>
     <RFLAGS value=""/>
     <AFLAGS value="/mx /w2 /zn"/>
-    <LFLAGS value="-D&quot;&quot; -ap -Tpe -x -Gn"/>
+    <LFLAGS value="-D&quot;&quot; -ap -Tpe -x -Gn -v"/>
     <OTHERFILES value=""/>
   </OPTIONS>
   <LINKER>
@@ -55,7 +55,6 @@
       <FILE FILENAME="strahl.cpp" FORMNAME="" UNITNAME="strahl.cpp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="material.cpp" FORMNAME="" UNITNAME="material" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="szene.cpp" FORMNAME="" UNITNAME="szene" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="primitiv.cpp" FORMNAME="" UNITNAME="primitiv" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="dreieck.cpp" FORMNAME="" UNITNAME="dreieck" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
   </FILELIST>
   <BUILDTOOLS>

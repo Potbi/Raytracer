@@ -1,13 +1,9 @@
 #include "primitiv.h"
 
-
-Primitiv::Primitiv(TVektor position, Material material, float radius){
-	this->kugel = Kugel(position, material, radius);
-    this->typ = true;
-}
-Primitiv::Primitiv(TVektor punktA, TVektor punktB, TVektor punktC, Material material){
-    this->dreieck = Dreieck(punktA, punktB, punktC, material);
-    this->typ = false;
+/*
+Primitiv::Primitiv(){
+	this->position = TVektor(0,0,0);
+    this->material = Material();
 }
 
 Strahl Primitiv::schnitt(Strahl s){
@@ -36,4 +32,4 @@ TVektor Primitiv::getPosition(){
     else{
         return dreieck.position;
     }
-}
+}*/
