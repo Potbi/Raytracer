@@ -24,6 +24,7 @@ class Dreieck{
 		// Konstruktoren
 		Dreieck ();
 		Dreieck (TVektor punktA, TVektor punktB, TVektor punktC, Material material);
+
 		//Methoden
 		Strahl schnitt(Strahl s);
 		Dreieck& operator=(Dreieck d);

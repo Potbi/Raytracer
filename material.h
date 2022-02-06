@@ -5,13 +5,13 @@
 
 class Material {
 	public:
-		// Member-Variablen
+        // Member-Variablen
         TColor farbe;
         float reflekt;
         float emission;
 
 
-		// Konstruktoren
+        // Konstruktoren
         Material();
         Material(TColor farbe, float reflekt, float emission);
 

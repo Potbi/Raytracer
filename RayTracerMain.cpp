@@ -31,7 +31,7 @@ int rows, columns;
 class TUser : public TPlan {
 
     float cosBeta(TVektor a, TVektor b){
-        // gibt einen Wert zwischen [0, 1] zur�ck
+        // gibt einen Wert zwischen [0, 1] zurueck
         // als Mass fuer den Winkel zwischen zwei Vektoren
         return std::max(0.0, ((a*b)/(sqrt(a*a)*sqrt(b*b))) );
         //return ((a*b)/(sqrt(a*a)*sqrt(b*b)));
@@ -92,7 +92,7 @@ class TUser : public TPlan {
                         }
                     }
 
-                    // wenn die aktuell untersuchte Lichtquelle das nahste Objekt ist, dann beleuchtung ermitteln
+                    // wenn die aktuell untersuchte Lichtquelle das naechste Objekt ist, dann Beleuchtung ermitteln
                     if ((gewinner_licht >= 0) && (gewinner_licht == i)) {
                         beleuchtung += cosBeta(lichtstrahl.richtung, s_treffer.normale);
                     }
@@ -144,7 +144,7 @@ class TUser : public TPlan {
 
     TColor farbeMischen(TColor c1, TColor c2, float anteil){
         // mischt zwei Farben c1 und c2
-        // float anteil gibt den Anteil von c1 an, zwischen 0 und 1
+        // float Anteil gibt den Anteil von c1 an, zwischen 0 und 1
         int r = int((anteil*GetRValue(c1)+(1-anteil)*GetRValue(c2)));
         int g = int((anteil*GetGValue(c1)+(1-anteil)*GetGValue(c2)));
         int b = int((anteil*GetBValue(c1)+(1-anteil)*GetBValue(c2)));
@@ -276,7 +276,7 @@ szene->DreieckHinzufuegen(TVektor(-0.442160,0.167028,0.323189),TVektor(-0.874183
 
 
         //std::cout<<szene->objekte[1]->radius;
-        // Einstellungen f�r Kachel-Rendern.
+        // Einstellungen fuer Kachel-Rendern.
         tilesize = 40;
         currenttile = 0;
         columns = ceil((float)kamera->aufloesungX/tilesize);

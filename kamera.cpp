@@ -29,7 +29,7 @@ Strahl Kamera::gibStrahl(int x,int y){
     TVektor richtung;
     double h_auslenkung, v_auslenkung, schrittweite;
 
-    // Anpassung der Pixelposition so das der Koordinatenursprung in der Mitte liegt
+    // Anpassung der Pixelposition so dass der Koordinatenursprung in der Mitte liegt
     h_auslenkung = double(x) - double(aufloesungX)/2.0;
     v_auslenkung = double(y) - double(aufloesungY)/2.0;
     schrittweite = 2.0/double(aufloesungX);

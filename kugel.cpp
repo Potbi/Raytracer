@@ -30,7 +30,7 @@ Strahl Kugel::schnitt(Strahl s){
         s.entfernung = -1;
     }
     else {
-        // quadratische Gleichung l�sen
+        // quadratische Gleichung loesen
         float p = 2 * (s.richtung*(s.ursprung - this->position)) / (s.richtung * s.richtung);
         float q = ((s.ursprung - this->position) * (s.ursprung - this->position) - (this->radius * this->radius)) / (s.richtung * s.richtung);
 

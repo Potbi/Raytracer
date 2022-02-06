@@ -52,7 +52,7 @@ Strahl Dreieck::schnitt(Strahl s){
         } else {
             // Berechne Koordinaten des Schnittpunkts.
             TVektor schnittpunkt(s.ursprung + t * s.richtung);
-            // schnittpunkt wird in dem strahl gespeichert
+            // Schnittpunkt wird in dem Strahl gespeichert
             s.schnittpunkt = schnittpunkt;
             // https://math.stackexchange.com/questions/51326/determining-if-an-arbitrary-point-lies-inside-a-triangle-defined-by-three-points
             TVektor A = cross((this->punktB - this->punktA),(schnittpunkt - this->punktA));
