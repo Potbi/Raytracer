@@ -29,15 +29,6 @@ Ebene::Ebene(TVektor eckpunkt, TVektor a, TVektor b, float breite, float laenge,
     this->transform(1,0) = this->b(0);
     this->transform(1,1) = this->b(1);
     this->transform(1,2) = this->b(2);
-
-
-	//this->transform = TMatrix(this->a[0],this->b[0],this->normal[0],this->a[1],this->b[1],this->normal[1],this->a[2],this->b[2],this->normal[2]);
-
-
-	// Ruecktransformation Welt -> Ebene
-	//this->transform = this->transform^"t";
-	// z-Koordinate ist fuer Punkte in der Ebene 0 (dritte Zeile nicht benoetigt)
-	//this->transform.Resize(2,3);
 	this->kachelgroesse = 0.5;
 }
 

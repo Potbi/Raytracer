@@ -5,6 +5,7 @@
 #include "strahl.h"
 #include "kugel.h"
 #include "ebene.h"
+#include "dreieck.h"
 #include "kamera.h"
 #include "szene.h"
 #include "material.h"
@@ -72,7 +73,7 @@
 
         // ### LAMBERTIAN SHADING ###
             TVektor lambertian;
-            float beleuchtung = 0.0;
+            float beleuchtung = 0.15;
             Strahl lichtstrahl;
 
             for(int i=0; i<szene.anzLichter; i++){

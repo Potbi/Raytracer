@@ -15,6 +15,11 @@ void Szene::lichtHinzufuegen(TVektor position, float helligkeit, float radius){
     anzLichter++;
 }
 
+void Szene::dreieckHinzufuegen (TVektor punktA, TVektor punktB, TVektor punktC, Material material){
+    objekte.push_back(new Dreieck(punktA, punktB, punktC, material));
+    anzObjekte++;
+}
+
 void Szene::primitivHinzufuegen (Primitiv* primitiv){
     objekte.push_back(primitiv);
 }
