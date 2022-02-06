@@ -10,8 +10,8 @@ void Szene::ebeneHinzufuegen (TVektor eckpunkt, TVektor a, TVektor b, float brei
     anzObjekte++;
 }
 
-void Szene::lichtHinzufuegen(TVektor position, float helligkeit){
-    lichter.push_back(new Licht(position, helligkeit));
+void Szene::lichtHinzufuegen(TVektor position, float helligkeit, float radius){
+    lichter.push_back(new Licht(position, helligkeit, radius));
     anzLichter++;
 }
 

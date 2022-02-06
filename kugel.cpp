@@ -25,6 +25,7 @@ Kugel::Kugel(float x, float y, float z, Material material, float radius){
 }
 
 Strahl Kugel::schnitt(Strahl s){
+    EinheitsVektor(s.richtung);
     if (Norm(s.richtung)==0){
         // Richtung des Schnittstrahls darf nicht 0 sein.
         s.entfernung = -1;
@@ -47,6 +48,7 @@ Strahl Kugel::schnitt(Strahl s){
             s.entfernung = ((abs(t1) < abs(t2)) ? t1 : t2);
             s.schnittpunkt = s.ursprung + s.richtung*s.entfernung;
             s.normale = s.schnittpunkt - this->position;
+            EinheitsVektor(s.normale);
         }
     }
     return s;

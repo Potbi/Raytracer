@@ -65,6 +65,7 @@ Strahl Ebene::schnitt(Strahl s){
 			if ((inEbene[0] < breite) && (inEbene[0] > 0) && (inEbene[1] > 0) && (inEbene[1] < laenge)){
 				s.normale = this->normal;
 				this->material = ((((int)(inEbene[0]/this->kachelgroesse) % 2) == ((int)(inEbene[1]/this->kachelgroesse) % 2)) ? materialA : materialB);
+                //this->material = materialA;
                 return(s);
 			} else {
 				s.entfernung = -1;

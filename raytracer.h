@@ -21,10 +21,17 @@
     }
 
     TColor hintergrundFarbe(float x, float start, float stop){
-        int r = (int)(map(x,start,stop,255,200)*100.0/255);          // 20
-        int g = (int)(map(x,start,stop,255,200)*100.0/255);         // 100
-        int b = (int)(map(x,start,stop,255,200)*100.0/255);         // 200
+        int r = (int)(map(x,start,stop,20,200)*100.0/255);          // 20
+        int g = (int)(map(x,start,stop,100,200)*100.0/255);         // 100
+        int b = (int)(map(x,start,stop,200,200)*100.0/255);         // 200
         return RGBSkala(r,g,b);
+    }
+
+    TVektor clip(TVektor a){
+        for (int i=0; i<3; i++){
+         a[i] = std::min(255,a[i]);
+        }
+        return a;
     }
 
     // ------- berechneFarbe - Funktion -------
@@ -45,18 +52,27 @@
             }
         }
 
+        // ### PUNKTLICHT-SHADER ###
+        float entfernung;
+        TVektor lichtShader(0,0,0);
+        TVektor beitrag;
+        for(int i=0; i<szene.anzLichter; i++){
+            beitrag = szene.lichter[i]->leuchtbeitrag(s,entfernung);
+            if ((entfernung > 0)&&(entfernung < abstandMin)){
+                // Lichtquelle sichtbar?
+                lichtShader=lichtShader+beitrag;
+            }
+        }
+
         // Wenn ein Objekt geschnitten wurde, den Farbbeitrag nach Shading-Modellen ermitteln
         if (gewinner >=0){
 
             // Schnittinformationen in s_treffer speichern.
             Strahl s_treffer = szene.objekte[gewinner]->schnitt(s);
 
-        // ### PUNKTLICHT-SHADER ###
-        //  
-
         // ### LAMBERTIAN SHADING ###
             TVektor lambertian;
-            float beleuchtung = 0.1;
+            float beleuchtung = 0.0;
             Strahl lichtstrahl;
 
             for(int i=0; i<szene.anzLichter; i++){
@@ -70,7 +86,7 @@
                 for(int j=0; j<szene.anzObjekte; j++){
                     // den Lichtstrahl mit allen Objekten schneiden und Schnittinformationen speichern
                     lichtstrahl = szene.objekte[j]->schnitt(lichtstrahl);
-                    if (lichtstrahl.entfernung > 0){
+                    if ((lichtstrahl.entfernung > 0) && (lichtstrahl.entfernung < Norm(szene.lichter[i]->position - s_treffer.schnittpunkt))){
                         verdeckt = true;
                     }
                 }
@@ -94,7 +110,7 @@
                 Strahl reflektionsStrahl;
                 reflektionsStrahl.richtung = s_treffer.richtung - 2 * (s_treffer.richtung * s_treffer.normale) * s_treffer.normale;
                 EinheitsVektor(reflektionsStrahl.richtung);
-                reflektionsStrahl.ursprung = s_treffer.schnittpunkt +0.01*reflektionsStrahl.richtung;
+                reflektionsStrahl.ursprung = s_treffer.schnittpunkt +0.0001*reflektionsStrahl.richtung;
                 // Farbe rekursiv mit reflektiertem Strahl berechnen:
                 reflection = berechneFarbe(szene,reflektionsStrahl,iteration-1);
             }
@@ -102,12 +118,12 @@
 
             // ### FARBBEITRAEGE MISCHEN ###
             float ref_anteil = szene.objekte[gewinner]->material.reflekt;
-            return (reflection*ref_anteil + lambertian*(1.0-ref_anteil));
+            return clip(reflection*ref_anteil + lambertian*(1.0-ref_anteil) +lichtShader );
         }
 
         // Wenn kein Objekt geschnitten wurde, Hintergrundfarbe zurueckgeben.
         TColor hintergrund = hintergrundFarbe(s.richtung[2],-1,1);
-        return TVektor(GetRValue(hintergrund),GetGValue(hintergrund),GetBValue(hintergrund));
+        return clip(TVektor(GetRValue(hintergrund),GetGValue(hintergrund),GetBValue(hintergrund))+lichtShader);
     }
 
 

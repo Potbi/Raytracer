@@ -25,7 +25,7 @@ class Szene {
         void primitivHinzufuegen (Primitiv* primitiv);
 		void kugelHinzufuegen (TVektor position, Material material, float radius);
         void ebeneHinzufuegen (TVektor eckpunkt, TVektor a, TVektor b, float breite, float laenge, Material materialA, Material materialB);
-        void lichtHinzufuegen (TVektor position, float helligkeit);
+        void lichtHinzufuegen (TVektor position, float helligkeit, float radius);
 };
 #endif
 

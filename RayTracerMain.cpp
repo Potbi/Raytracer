@@ -28,13 +28,13 @@ class TUser : public TPlan {
 
     void Init(){
         // Kamera initialisieren.
-        TVektor kam_pos(3,0,2.5);
-        TVektor blick(0.965926,0.000000,-0.258819);
-        TVektor oben(-0.258819,0.000000,-0.965926);
+        TVektor kam_pos(3,0,0.5);
+        TVektor blick(0.996195,0.000000,-0.087156);
+        TVektor oben(-0.087156,0.000000,-0.996195);
 
         const int XAUFL = 720;
         const int YAUFL = 480;
-        const float BRENN =1;
+        const float BRENN =2;
 
         kamera = new Kamera(kam_pos, blick, oben, XAUFL, YAUFL, BRENN);
 
@@ -49,14 +49,17 @@ class TUser : public TPlan {
 
 
         // Licht
-        szene->lichtHinzufuegen(TVektor(6,1.5,4), 1);
+        szene->lichtHinzufuegen(TVektor(5,0.5,1.2), 1, 0.3);
+        //szene->kugelHinzufuegen(TVektor(5,0.5,1.5), mtl_unirot, 0.3);
 
-        // Geometrie
         // Ebene mit Schachbrett
         szene->ebeneHinzufuegen(TVektor(5,2.5,0),TVektor(0,-1,0),TVektor(1,0,0),5,5,mtl_weiss,mtl_schwarz);
-        szene->ebeneHinzufuegen(TVektor(5,2.5,5),TVektor(0,0,-1),TVektor(1,0,0),5,5,mtl_weiss,mtl_schwarz);
+        //szene->ebeneHinzufuegen(TVektor(5,2.5,5),TVektor(0,0,-1),TVektor(1,0,0),5,5,mtl_weiss,mtl_schwarz);
 
-        szene->kugelHinzufuegen(TVektor(7,0,0.5), mtl_unirot, 0.5);
+        // Kugeln
+        szene->kugelHinzufuegen(TVektor(7.5,-1,0.5), mtl_metall, 0.5);
+        szene->kugelHinzufuegen(TVektor(7.5,0.8,0.5), mtl_unirot, 0.5);
+
 
         // Einstellungen für Kachel-Rendern.
         tilesize = 40;
