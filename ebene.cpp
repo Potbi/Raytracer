@@ -45,7 +45,7 @@ Strahl Ebene::schnitt(Strahl s){
         // Schnittpunktberechnung mit Ebene.
         s.entfernung = zaehler/nenner;
         if (s.entfernung < 0){
-			// Schnittpunkte, die in negative Strahlrichtung liegen, werden ignoriert.
+			// Ignoriere Schnittpunkte in negativer Strahl-Richtung.
             s.entfernung = -1;
 			return(s);
         } else {
@@ -55,7 +55,7 @@ Strahl Ebene::schnitt(Strahl s){
 			TVektor inEbene = this->transform * (s.schnittpunkt-this->eckpunkt);
 			if ((inEbene[0] < breite) && (inEbene[0] > 0) && (inEbene[1] > 0) && (inEbene[1] < laenge)){
 				s.normale = this->normal;
-				// Setzen von Material auf materialA / materialB, je nach Kachel.
+				// Setzen von materialA / materialB, je nach Kachel.
 				this->material = ((((int)(inEbene[0]/this->kachelgroesse) % 2) == ((int)(inEbene[1]/this->kachelgroesse) % 2)) ? materialA : materialB);
                 return(s);
 			} else {

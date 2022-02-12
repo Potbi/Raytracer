@@ -6,7 +6,7 @@ Licht::Licht(){
     this->radius = 0;
 }
 
-Licht::Licht(TVektor position, float helligkeit, float radius){
+Licht::Licht(TVektor position, float radius){
     this->position = position;
     this->radius = radius;
 }

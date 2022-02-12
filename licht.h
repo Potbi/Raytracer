@@ -14,7 +14,7 @@ public:
     
     // Konstruktoren
     Licht();
-	Licht(TVektor position, float helligkeit, float radius);
+	Licht(TVektor position, float radius);
 
     // Member-Funktionen
     Strahl schnitt(Strahl s);
