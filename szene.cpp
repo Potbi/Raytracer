@@ -6,8 +6,8 @@ void Szene::kugelHinzufuegen(TVektor position, Material material, float radius){
     this->anzPrimitive++;
 }
 
-void Szene::ebeneHinzufuegen (TVektor eckpunkt, TVektor a, TVektor b, float breite, float laenge, Material materialA, Material materialB){
-    this->primitive.push_back(new Ebene(eckpunkt, a, b, breite, laenge, materialA, materialB));
+void Szene::ebeneHinzufuegen (TVektor eckpunkt, TVektor a, TVektor b, float breite, float laenge, Material materialA, Material materialB, float kachelgroesse){
+    this->primitive.push_back(new Ebene(eckpunkt, a, b, breite, laenge, materialA, materialB, kachelgroesse));
     this->anzPrimitive++;
 }
 

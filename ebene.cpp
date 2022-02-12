@@ -5,7 +5,7 @@ TVektor cross(TVektor a, TVektor b){
 	return TVektor(a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]);
 }
 
-Ebene::Ebene(TVektor eckpunkt, TVektor a, TVektor b, float breite, float laenge, Material materialA, Material materialB){
+Ebene::Ebene(TVektor eckpunkt, TVektor a, TVektor b, float breite, float laenge, Material materialA, Material materialB, float kachelgroesse){
     // Konstruktor 
 	this->eckpunkt = eckpunkt;
 	this->a = a;
@@ -29,7 +29,7 @@ Ebene::Ebene(TVektor eckpunkt, TVektor a, TVektor b, float breite, float laenge,
     this->transform(1,0) = this->b(0);
     this->transform(1,1) = this->b(1);
     this->transform(1,2) = this->b(2);
-	this->kachelgroesse = 0.5;
+	this->kachelgroesse = kachelgroesse;
 }
 
 
@@ -55,8 +55,8 @@ Strahl Ebene::schnitt(Strahl s){
 			TVektor inEbene = this->transform * (s.schnittpunkt-this->eckpunkt);
 			if ((inEbene[0] < breite) && (inEbene[0] > 0) && (inEbene[1] > 0) && (inEbene[1] < laenge)){
 				s.normale = this->normal;
+				// Setzen von Material auf materialA / materialB, je nach Kachel.
 				this->material = ((((int)(inEbene[0]/this->kachelgroesse) % 2) == ((int)(inEbene[1]/this->kachelgroesse) % 2)) ? materialA : materialB);
-                //this->material = materialA;
                 return(s);
 			} else {
 				s.entfernung = -1;

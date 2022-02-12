@@ -141,7 +141,7 @@ class TUser : public TPlan {
         szene->lichtHinzufuegen(TVektor(-30,10,30), 1, 0.3);
 
         // Ebene mit Schachbrettmuster
-        szene->ebeneHinzufuegen(TVektor(-2,2,0),TVektor(0,-1,0),TVektor(1,0,0),4,4,mtl_weiss,mtl_schwarz);
+        szene->ebeneHinzufuegen(TVektor(-2,2,0),TVektor(0,-1,0),TVektor(1,0,0),4,4,mtl_weiss,mtl_schwarz,0.5);
 
         // Kugeln zufaellig hinzufuegen
         const int N = 50;

@@ -23,10 +23,9 @@ public:
     float breite;
     float laenge;
 
-    
     // Konstruktoren
     Ebene();
-    Ebene(TVektor eckpunkt, TVektor a, TVektor b, float breite, float laenge, Material materialA, Material materialB);
+    Ebene(TVektor eckpunkt, TVektor a, TVektor b, float breite, float laenge, Material materialA, Material materialB, float kachelgroesse);
 
     // Member-Funktionen
     Strahl schnitt(Strahl s);
