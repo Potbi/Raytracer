@@ -107,7 +107,6 @@ class TUser : public TPlan {
         szene->dreieckHinzufuegen(TVektor(-0.217709,-0.098860,0.097341),TVektor(-0.438017,-0.045412,0.220844),TVektor(-0.220308,0.053448,0.123503),mtl_dia);
         szene->dreieckHinzufuegen(TVektor(-0.109632,-0.209128,0.104363),TVektor(-0.327341,-0.307988,0.201704),TVektor(-0.217709,-0.098860,0.097341),mtl_dia);
         szene->dreieckHinzufuegen(TVektor(-0.115909,0.158576,0.167524),TVektor(-0.081574,0.313517,0.371142),TVektor(0.034335,0.154941,0.203617),mtl_dia);
-
     }
 
     void Init(){
@@ -116,8 +115,8 @@ class TUser : public TPlan {
         TVektor blick(0.996195,0.000000,-0.087156);
         TVektor oben(-0.087156,0.000000,-0.996195);
 
-        const int XAUFL = 720;
-        const int YAUFL = 480;
+        const int XAUFL = GetMaxW()/8;
+        const int YAUFL = GetMaxH()/8;
         const float BRENN =2.2;
 
         kamera = new Kamera(kam_pos, blick, oben, XAUFL, YAUFL, BRENN);
@@ -166,7 +165,7 @@ class TUser : public TPlan {
         }
 
         // Diamant hinzufuegen
-        Diamant();
+        //Diamant();
 
 
         // Einstellungen für Kachel-Rendern.

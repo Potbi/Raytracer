@@ -10,131 +10,143 @@
 #include "szene.h"
 #include "material.h"
 
-    // ------- Helfer - Funktionen -------
+    const float versatz = 1.0e-5;
+    const float unendlich = std::numeric_limits<float>::infinity();
+
+    //--------------------------- Helfer-Funktionen -----------------------------
+
 	float cosBeta(TVektor a, TVektor b){
-        // gibt einen Wert zwischen [0, 1] zurueck
-        // als Mass fuer den Winkel zwischen zwei Vektoren
+        // Gibt den cos des Winkels zwischen Vektoren a, b zurueck,
+        // return-Wert zwischen 0 (parallel) und 1 (orthogonal).
         return std::max(0.0, ((a*b)/(sqrt(a*a)*sqrt(b*b))) );
     }
 
-    float map(float x, float start1, float stop1, float start2, float stop2){
+    float interp(float x, float start1, float stop1, float start2, float stop2){
+        // Bildet x vom Intervall [start1, stop1] auf [start2, stop2] ab.
         return(start2+((x-start1)/(stop1-start1))*(stop2-start2));
     }
 
-    TColor hintergrundFarbe(float x, float start, float stop){
-        int r = (int)(map(x,start,stop,20,200)*100.0/255);          // 20
-        int g = (int)(map(x,start,stop,100,200)*100.0/255);         // 100
-        int b = (int)(map(x,start,stop,200,200)*100.0/255);         // 200
-        return RGBSkala(r,g,b);
+    TVektor hintergrundFarbe(float x, float start, float stop){
+        // Gibt fuer ein x aus dem Intervall [start, stop] die Farbe
+        // aus einer Farbskala zurueck.
+        int r = interp(x,start,stop,20,200);
+        int g = interp(x,start,stop,100,200);
+        int b = interp(x,start,stop,200,200);
+        return TVektor(r,g,b);
+    }
+
+    TVektor TColor2TVektor(TColor farbe){
+        // Konvertiert TColor in TVektor.
+        int r = int(GetRValue(farbe));
+        int g = int(GetGValue(farbe));
+        int b = int(GetBValue(farbe));
+        return TVektor(r,g,b);
     }
 
     TVektor clip(TVektor a){
+        // Begrenzt die Eintraege eines TVektors auf maximal 255.
         for (int i=0; i<3; i++){
          a[i] = std::min(255,a[i]);
         }
         return a;
     }
 
-    // ------- berechneFarbe - Funktion -------
+    //------------------- SHADING (berechneFarbe - Funktion) --------------------
 
     TVektor berechneFarbe(Szene szene, Strahl s, int iteration){
-        // Abbruchbedingung Rekursion: wenn maximale Anzahl Strahlen erreicht -> keinen Farbbeitrag mehr ermitteln.
+        // Berechnet fuer einen uebergebenen Strahl und eine Szene
+        // rekursiv den Farbbeitrag anhand der vom Strahl geschnittenen
+        // Primitive mit drei Shading-Modellen.
+
+        // Abbruch der Rekursion (maximale Iterationen erreicht).
         if (iteration == 0) return TVektor(0,0,0);
 
-        // Strahl mit der Szene schneiden und vorderstes Schnittobjekt mit Index i ermitteln.
-        float abstand;
-        float abstandMin  = std::numeric_limits<float>::infinity();
+        // Alle Primitive der Szene auf Schnittpunkte mit dem Strahl
+        // ueberpruefen, ggfs. vorderstes Primitiv ermitteln und
+        // den Index in gewinner speichern.
+        float abstandMin  = unendlich;
         int gewinner = -1;
         for(int i=0; i<szene.anzObjekte; i++){
             s = szene.objekte[i]->schnitt(s);
-            if ((s.entfernung > 0)&&(s.entfernung < abstandMin)){
+            if ((s.entfernung > 0) && (s.entfernung < abstandMin)){
                 abstandMin=s.entfernung;
                 gewinner = i;
             }
         }
 
-        // ### PUNKTLICHT-SHADER ###
+        //----------------------- (1) Punktlicht-Shader -------------------------
         float entfernung;
         TVektor lichtShader(0,0,0);
         TVektor beitrag;
         for(int i=0; i<szene.anzLichter; i++){
             beitrag = szene.lichter[i]->leuchtbeitrag(s,entfernung);
             if ((entfernung > 0)&&(entfernung < abstandMin)){
-                // Lichtquelle sichtbar?
-                lichtShader=lichtShader+beitrag;
+                lichtShader+=beitrag;
             }
         }
 
-        // Wenn ein Objekt geschnitten wurde, den Farbbeitrag nach Shading-Modellen ermitteln
-        if (gewinner >=0){
-
-            // Schnittinformationen in s_treffer speichern.
-            Strahl s_treffer = szene.objekte[gewinner]->schnitt(s);
-
-        // ### LAMBERTIAN SHADING ###
-            TVektor lambertian;
-            float beleuchtung = 0.15;
-            Strahl lichtstrahl;
-
-            for(int i=0; i<szene.anzLichter; i++){
-                // ... -> Lichtstrahl von Objekt zur Lichtquelle berechnen
-                lichtstrahl.richtung = szene.lichter[i]->position - s_treffer.schnittpunkt;
-                EinheitsVektor(lichtstrahl.richtung);
-                lichtstrahl.ursprung = s_treffer.schnittpunkt + 0.01*lichtstrahl.richtung;
-
-                // Pruefen, ob Objekte im Weg sind
-                bool verdeckt = false;
-                for(int j=0; j<szene.anzObjekte; j++){
-                    // den Lichtstrahl mit allen Objekten schneiden und Schnittinformationen speichern
-                    lichtstrahl = szene.objekte[j]->schnitt(lichtstrahl);
-                    if ((lichtstrahl.entfernung > 0) && (lichtstrahl.entfernung < Norm(szene.lichter[i]->position - s_treffer.schnittpunkt))){
-                        verdeckt = true;
-                    }
-                }
-                // wenn die aktuell untersuchte Lichtquelle das nahste Objekt ist, dann Beleuchtung ermitteln
-                if (!verdeckt) {
-                    beleuchtung += cosBeta(lichtstrahl.richtung, s_treffer.normale);
-                }
-            }
-
-            int r = int(GetRValue(szene.objekte[gewinner]->material.farbe));
-            int g = int(GetGValue(szene.objekte[gewinner]->material.farbe));
-            int b = int(GetBValue(szene.objekte[gewinner]->material.farbe));
-            if (beleuchtung > 1){beleuchtung = 1;}
-            lambertian = TVektor(r,g,b) * beleuchtung;
-
-
-            // ### REFLECTION SHADING ###
-            TVektor reflection(0,0,0);
-            if (szene.objekte[gewinner]->material.reflekt > 0){
-                // Strahl reflektieren (Einfallswinkel = Ausfallswinkel).
-                Strahl reflektionsStrahl;
-                reflektionsStrahl.richtung = s_treffer.richtung - 2 * (s_treffer.richtung * s_treffer.normale) * s_treffer.normale;
-                EinheitsVektor(reflektionsStrahl.richtung);
-                reflektionsStrahl.ursprung = s_treffer.schnittpunkt +0.0001*reflektionsStrahl.richtung;
-                // Farbe rekursiv mit reflektiertem Strahl berechnen:
-                reflection = berechneFarbe(szene,reflektionsStrahl,iteration-1);
-            }
-
-
-            // ### FARBBEITRAEGE MISCHEN ###
-            float ref_anteil = szene.objekte[gewinner]->material.reflekt;
-            return clip(reflection*ref_anteil + lambertian*(1.0-ref_anteil) +lichtShader );
+        // Wenn kein Primitiv geschnitten wurde, Hintergrundfarbe zueruckgeben.
+        if (gewinner == -1){
+            // Blau-Wert, je nach z-Wert des Strahls.
+            return clip(hintergrundFarbe(s.richtung[2],-1,1) + lichtShader);
         }
 
-        // Wenn kein Objekt geschnitten wurde, Hintergrundfarbe zurueckgeben.
-        TColor hintergrund = hintergrundFarbe(s.richtung[2],-1,1);
-        return clip(TVektor(GetRValue(hintergrund),GetGValue(hintergrund),GetBValue(hintergrund))+lichtShader);
-    }
+        //------------------------ (2)  Primitiv-Shader -------------------------
+        // Wenn Primitive geschnitten wurden, 
+        // Schnittinformationen (Entfernung, Normale, Schnittpunkt) fuer das
+        // vorderste Primitiv im Srahl treffer speichern.
+        Strahl treffer = szene.objekte[gewinner]->schnitt(s);
+
+        //------------------------ (2a) Lambertian ------------------------------
+        TVektor lambertian;
+        float beleuchtung = 0.15;
+        Strahl lichtstrahl;
+
+        for(int i=0; i<szene.anzLichter; i++){
+
+            // Vom Schnittpunkt aus zu jeder Lichtquelle einen Lichtstrahl berechnen.
+            lichtstrahl.richtung = szene.lichter[i]->position - treffer.schnittpunkt;
+            EinheitsVektor(lichtstrahl.richtung);
+            lichtstrahl.ursprung = treffer.schnittpunkt + versatz*lichtstrahl.richtung;
+
+            // Ueberpruefen, ob sich Primitive zwischen Schnittpunkt
+            // und Lichtquelle befinden.
+            bool verdeckt = false;
+            float abstand = Norm(szene.lichter[i]->position - treffer.schnittpunkt);
+            for(int j=0; j<szene.anzObjekte; j++){
+                lichtstrahl = szene.objekte[j]->schnitt(lichtstrahl);
+                if ((lichtstrahl.entfernung > 0) && (lichtstrahl.entfernung < abstand)){
+                    verdeckt = true;
+                }
+            }
+            // Wenn Lichtquelle nicht verdeckt, Beleuchtungsbeitrag ermitteln.
+            if (!verdeckt) {
+                beleuchtung += cosBeta(lichtstrahl.richtung, treffer.normale);
+            }
+        }
+
+        // Ermitteln der Farbe aus Beleuchtung und Materialfarbe des Primitivs.
+        if (beleuchtung > 1) { beleuchtung = 1; }
+        lambertian = TColor2TVektor(szene.objekte[gewinner]->material.farbe) * beleuchtung;
 
 
-    TColor farbeMischen(TColor c1, TColor c2, float anteil){
-        // mischt zwei Farben c1 und c2
-        // float anteil gibt den Anteil von c1 an, zwischen 0 und 1
-        int r = int((anteil*GetRValue(c1)+(1-anteil)*GetRValue(c2)));
-        int g = int((anteil*GetGValue(c1)+(1-anteil)*GetGValue(c2)));
-        int b = int((anteil*GetBValue(c1)+(1-anteil)*GetBValue(c2)));
-    return RGB(r,g,b);
+        //------------------------ (2b) Reflektion ------------------------------
+        TVektor reflektion(0,0,0);
+        if (szene.objekte[gewinner]->material.reflekt > 0){
+            
+            // Reflektierten Strahl berechnen (Einfallswinkel = Ausfallswinkel).
+            Strahl reflektionsStrahl;
+            reflektionsStrahl.richtung = treffer.richtung - 2 * (treffer.richtung * treffer.normale) * treffer.normale;
+            EinheitsVektor(reflektionsStrahl.richtung);
+            reflektionsStrahl.ursprung = treffer.schnittpunkt + versatz*reflektionsStrahl.richtung;
+            
+            // Farbe rekursiv mit reflektiertem Strahl berechnen:
+            reflektion = berechneFarbe(szene,reflektionsStrahl,iteration-1);
+        }
+
+        //--------------- Farbbeitraege mischen und zurueckgeben ----------------
+        float ref_anteil = szene.objekte[gewinner]->material.reflekt;
+        return clip(reflektion*ref_anteil + lambertian*(1.0-ref_anteil) + lichtShader);
     }
 	
 #endif
