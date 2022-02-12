@@ -7,12 +7,6 @@
 #include "primitiv.h"
 
 class Dreieck : public Primitiv {
-	private:
-		float a;
-		float b;
-		float c;
-		float d;
-	
 	public:
 		// Member-Variablen
 		TVektor punktA;
@@ -22,6 +16,8 @@ class Dreieck : public Primitiv {
 
 		// Konstruktoren
 		Dreieck (TVektor punktA, TVektor punktB, TVektor punktC, Material material);
+
+        // Member-Funktionen
 		Strahl schnitt(Strahl s);
 };
 

@@ -12,11 +12,6 @@ Dreieck::Dreieck (TVektor punktA, TVektor punktB, TVektor punktC, Material mater
 	this->material = material;
     this->normal = cross(punktB-punktA,punktC-punktA);
     EinheitsVektor(this->normal);
-    this->a = this->normal(0);
-    this->b = this->normal(1);
-    this->c = this->normal(2);
-    this->d = this->normal * this->punktA;
-
 }
 
 Strahl Dreieck::schnitt(Strahl s){
@@ -25,18 +20,15 @@ Strahl Dreieck::schnitt(Strahl s){
     float nenner = (s.richtung*this->normal);
     // Schnittstrahl darf nicht parallel zum Dreieck sein.
     if (nenner == 0){
-        s.entfernung = -1;
-		return(s);
+        s.entfernung = -1; return(s);
     } else {
         // Schnittpunktberechnung mit Ebene.
         s.entfernung = zaehler/nenner;
-        // Schnittpunkte, die in negative Strahlrichtung liegen, werden ignoriert.
+        // Ignoriere Schnittpunkte in negativer Strahl-Richtung.
         if (s.entfernung < 0){
-            s.entfernung = -1;
-		    return(s);
-        // Pruefe, ob der Schnittpunkt im Dreieck liegt.
+            s.entfernung = -1; return(s);
         } else {
-            // Berechne Koordinaten des Schnittpunkts.
+            // Pruefe, ob der Schnittpunkt im Dreieck liegt.
             s.schnittpunkt = s.ursprung + s.entfernung * s.richtung;
             // https://math.stackexchange.com/questions/51326/determining-if-an-arbitrary-point-lies-inside-a-triangle-defined-by-three-points
             TVektor A = cross((this->punktB - this->punktA),(s.schnittpunkt - this->punktA));
@@ -47,8 +39,7 @@ Strahl Dreieck::schnitt(Strahl s){
                 s.normale = this->normal;
                 return(s);
             } else {
-                s.entfernung = -1;
-		        return(s);
+                s.entfernung = -1; return(s);
             }
         }
     }
