@@ -5,8 +5,6 @@
 #include "strahl.h"
 
 class Licht{
-private:
-
 public:
     // Member-Variablen
     TVektor position;
