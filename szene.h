@@ -11,16 +11,19 @@
 class Szene {
 	public:
 		// Member-Variablen
-                int anzObjekte;
+                int anzPrimitive;
                 int anzLichter;
-                std::vector<Primitiv*> objekte;
+                std::vector<Primitiv*> primitive;
                 std::vector<Licht*> lichter;
 
 		// Konstruktoren
 		Szene() {
-                anzObjekte = 0;
+                anzPrimitive = 0;
                 anzLichter = 0;
                 }
+
+        // Destruktoren
+        ~Szene();
 
 		// Member-Funktionen
         void primitivHinzufuegen (Primitiv* primitiv);

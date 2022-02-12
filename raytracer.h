@@ -55,7 +55,7 @@ TVektor clip(TVektor a){
 
 //--------------------- SHADING (berechneFarbe - Funktion) ----------------------
 
-TVektor berechneFarbe(Szene szene, Strahl s, int iteration){
+TVektor berechneFarbe(Szene *szene, Strahl s, int iteration){
     // Berechnet fuer einen uebergebenen Strahl und eine Szene
     // rekursiv den Farbbeitrag anhand der vom Strahl geschnittenen
     // Primitive mit drei Shading-Modellen.
@@ -68,8 +68,8 @@ TVektor berechneFarbe(Szene szene, Strahl s, int iteration){
     // den Index in gewinner speichern.
     float abstandMin  = UNENDL;
     int gewinner = -1;
-    for(int i=0; i<szene.anzObjekte; i++){
-        s = szene.objekte[i]->schnitt(s);
+    for(int i=0; i<szene->anzPrimitive; i++){
+        s = szene->primitive[i]->schnitt(s);
         if ((s.entfernung > 0) && (s.entfernung < abstandMin)){
             abstandMin=s.entfernung;
             gewinner = i;
@@ -82,8 +82,8 @@ TVektor berechneFarbe(Szene szene, Strahl s, int iteration){
     float beitrag;
 
     // Ermittle Leuchtbeitrag von allen nicht-verdeckten Punktlichtern.
-    for(int i=0; i<szene.anzLichter; i++){
-        s = szene.lichter[i]->schnitt(s);
+    for(int i=0; i<szene->anzLichter; i++){
+        s = szene->lichter[i]->schnitt(s);
         if ((s.entfernung > 0) && (s.entfernung < abstandMin)){
             beitrag = 1 - sqrt(1-pow((cosBeta((-1)*s.richtung,s.normale)),2));
             lichtShader += beitrag * TVektor(255,255,255);
@@ -100,26 +100,26 @@ TVektor berechneFarbe(Szene szene, Strahl s, int iteration){
     // Wenn Primitive geschnitten wurden, dann Lambertian-/Reflektionsshading.
     // Schnittinformationen (Entfernung, Normale, Schnittpunkt) fuer das
     // vorderste Primitiv im Srahl treffer speichern.
-    Strahl treffer = szene.objekte[gewinner]->schnitt(s);
+    Strahl treffer = szene->primitive[gewinner]->schnitt(s);
 
     //---------------------------- (2a) Lambertian ------------------------------
     TVektor lambertian;
     float beleuchtung = 0.15;
     Strahl lichtstrahl;
 
-    for(int i=0; i<szene.anzLichter; i++){
+    for(int i=0; i<szene->anzLichter; i++){
 
         // Vom Schnittpunkt aus zu jeder Lichtquelle einen Lichtstrahl berechnen.
-        lichtstrahl.richtung = szene.lichter[i]->position - treffer.schnittpunkt;
+        lichtstrahl.richtung = szene->lichter[i]->position - treffer.schnittpunkt;
         EinheitsVektor(lichtstrahl.richtung);
         lichtstrahl.ursprung = treffer.schnittpunkt + VERSATZ*lichtstrahl.richtung;
 
         // Ueberpruefen, ob sich Primitive zwischen Schnittpunkt
         // und Lichtquelle befinden.
         bool verdeckt = false;
-        float abstand = Norm(szene.lichter[i]->position - treffer.schnittpunkt);
-        for(int j=0; j<szene.anzObjekte; j++){
-            lichtstrahl = szene.objekte[j]->schnitt(lichtstrahl);
+        float abstand = Norm(szene->lichter[i]->position - treffer.schnittpunkt);
+        for(int j=0; j<szene->anzPrimitive; j++){
+            lichtstrahl = szene->primitive[j]->schnitt(lichtstrahl);
             if ((lichtstrahl.entfernung > 0) && (lichtstrahl.entfernung < abstand)){
                 verdeckt = true;
             }
@@ -132,12 +132,12 @@ TVektor berechneFarbe(Szene szene, Strahl s, int iteration){
 
     // Ermitteln der Farbe aus Beleuchtung und Materialfarbe des Primitivs.
     if (beleuchtung > 1) { beleuchtung = 1; }
-    lambertian = TColor2TVektor(szene.objekte[gewinner]->material.farbe) * beleuchtung;
+    lambertian = TColor2TVektor(szene->primitive[gewinner]->material.farbe) * beleuchtung;
 
 
     //---------------------------- (2b) Reflektion ------------------------------
     TVektor reflektion(0,0,0);
-    if (szene.objekte[gewinner]->material.reflekt > 0){
+    if (szene->primitive[gewinner]->material.reflekt > 0){
 
         // Reflektierten Strahl berechnen (Einfallswinkel = Ausfallswinkel).
         Strahl reflektionsStrahl;
@@ -150,7 +150,7 @@ TVektor berechneFarbe(Szene szene, Strahl s, int iteration){
     }
 
     //-------------------- Farbbeitraege mischen und zurueckgeben ----------------
-    float ref_anteil = szene.objekte[gewinner]->material.reflekt;
+    float ref_anteil = szene->primitive[gewinner]->material.reflekt;
     return clip(reflektion*ref_anteil + lambertian*(1.0-ref_anteil) + lichtShader);
 }
 

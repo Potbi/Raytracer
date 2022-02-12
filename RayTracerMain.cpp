@@ -135,15 +135,13 @@ class TUser : public TPlan {
 
 
         // Licht
-        //szene->lichtHinzufuegen(TVektor(-30,10,30), 1, 0.3);
-        szene->lichtHinzufuegen(TVektor(0,0,1), 1, 0.3);
-
+        szene->lichtHinzufuegen(TVektor(-30,10,30), 1, 0.3);
 
         // Ebene mit Schachbrettmuster
         szene->ebeneHinzufuegen(TVektor(-2,2,0),TVektor(0,-1,0),TVektor(1,0,0),4,4,mtl_weiss,mtl_schwarz);
 
         // Kugeln zufaellig hinzufuegen
-        const int N = 5;
+        const int N = 50;
         int i=0;
         while (i<N){
             float x = static_cast< float >(rand() % 400 - 199)/100.0;
@@ -167,7 +165,7 @@ class TUser : public TPlan {
         }
 
         // Diamant hinzufuegen
-        //Diamant();
+        Diamant();
 
 
         // Einstellungen für Kachel-Rendern.
@@ -193,6 +191,11 @@ class TUser : public TPlan {
         }
     }
 
+    void Finish(){
+        delete szene;
+        delete kamera;
+    }
+
     float min(float a, float b){
         return((a<b) ? a : b);
     }
@@ -205,7 +208,7 @@ class TUser : public TPlan {
         for (int x=(currentcolumn-1)*tilesize; x<min(currentcolumn*tilesize,kamera->aufloesungX); x++){
             Busy = PlanString("Fortschritt: ") + 100*totalpx/(kamera->aufloesungX*kamera->aufloesungY) + PlanString(" %");
             for (int y=(currentrow-1)*tilesize; y<min(currentrow*tilesize,kamera->aufloesungY); y++){
-                TVektor f = berechneFarbe(*szene, kamera->gibStrahl(x,y), 6);
+                TVektor f = berechneFarbe(szene, kamera->gibStrahl(x,y), 6);
                 TColor farbe(RGB(f[0],f[1],f[2]));
                 SetPixel(x,y,farbe);
                 totalpx++;
