@@ -110,6 +110,9 @@ class TUser : public TPlan {
     }
 
     void Init(){
+        ProgrammName = "Einfacher Ray-Tracing Renderer";
+        ProgrammInfo = "Simulation komplexer System WS21/22\nJoern Froboese\nKatja Ruge\nMaximilian Kens";
+
         // Kamera initialisieren.
         TVektor kam_pos(-3,0,0.7);
         TVektor blick(0.996195,0.000000,-0.087156);
