@@ -3,10 +3,8 @@
 
 Kugel::Kugel() {
     // Standardkonstruktor
-    TVektor null(3);
     this->position = NULL;
     this->material = Material();
-	//this->material = Material(Weiss,0.0,1.0);
 	this->radius = 0;
 }
 
