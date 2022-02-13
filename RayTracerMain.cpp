@@ -27,7 +27,78 @@ int rows, columns;
 
 class TUser : public TPlan {
 
+    void Leer(){
+        kamera = new Kamera();
+        szene = new Szene();
+        // Einstellungen für Kachel-Rendern.
+        tilesize = 40;
+        currenttile = 0;
+        columns = ceil((float)kamera->aufloesungX/tilesize);
+        rows = ceil((float)kamera->aufloesungY/tilesize);
+    }
+
     void Diamant(){
+
+        // Kamera initialisieren.
+        TVektor kam_pos(-3,0,0.7);
+        TVektor blick(0.996195,0.000000,-0.087156);
+        TVektor oben(-0.087156,0.000000,-0.996195);
+
+        const int XAUFL = GetMaxW()/8;
+        const int YAUFL = GetMaxH()/8;
+        const float BRENN =2.2;
+
+        kamera = new Kamera(kam_pos, blick, oben, XAUFL, YAUFL, BRENN);
+
+        // Einstellungen für Kachel-Rendern.
+        tilesize = 40;
+        currenttile = 0;
+        columns = ceil((float)kamera->aufloesungX/tilesize);
+        rows = ceil((float)kamera->aufloesungY/tilesize);
+
+        // Szene initialisieren.
+        szene = new Szene();
+
+        TColor unirot = RGB(213,17,48);
+        TColor grau = RGB(70,70,70);
+
+        Material mtl_weiss(Weiss, 0);
+        Material mtl_schwarz(grau,0);
+        Material mtl_unirot(unirot,0);
+        Material mtl_metall(Weiss,0.9);
+        Material mtl_gelb(Gelb,0);
+
+
+        // Licht
+        szene->lichtHinzufuegen(TVektor(-30,10,30), 0.3);
+
+        // Ebene mit Schachbrettmuster
+        szene->ebeneHinzufuegen(TVektor(-2,2,0),TVektor(0,-1,0),TVektor(1,0,0),4,4,mtl_weiss,mtl_schwarz,0.5);
+
+        // Kugeln zufaellig hinzufuegen
+        const int N = 50;
+        int i=0;
+        while (i<N){
+            float x = static_cast< float >(rand() % 400 - 199)/100.0;
+            float y = static_cast< float >(rand() % 400 - 199)/100.0;
+            if ( ((x<-0.5)||(x>0.5)) && ((y<-0.5)||(y>0.5)) ) {
+                i++;
+                float r = static_cast< float >(rand() % 25 +1)/100.0;
+                float z = static_cast< float >(rand() % 200 +1)/100.0;
+                int level = (rand() % 10);
+                int farbe = (rand() % 10);
+                z = ((level>5) ? r : z);
+                if (farbe == 3) {
+                    szene->kugelHinzufuegen(TVektor(x,y,z), mtl_metall, r);
+                }
+                if ((farbe>4)&&(farbe!=3)) {
+                    szene->kugelHinzufuegen(TVektor(x,y,z), mtl_gelb, r);
+                } else {
+                    szene->kugelHinzufuegen(TVektor(x,y,z), mtl_unirot, r);
+                }
+            }
+        }
+
         Material mtl_dia(Weiss,0.9);
         szene->dreieckHinzufuegen(TVektor(0.088642,-0.079207,0.469923),TVektor(-0.106926,0.120328,0.457217),TVektor(-0.295841,-0.069904,0.377559),mtl_dia);
         szene->dreieckHinzufuegen(TVektor(-0.220308,0.053448,0.123503),TVektor(-0.115909,0.158576,0.167524),TVektor(0.000000,0.000000,-0.000000),mtl_dia);
@@ -113,69 +184,21 @@ class TUser : public TPlan {
         ProgrammName = "Einfacher Ray-Tracing Renderer";
         ProgrammInfo = "Simulation komplexer System WS21/22\nJoern Froboese\nKatja Ruge\nMaximilian Kens";
 
-        // Kamera initialisieren.
-        TVektor kam_pos(-3,0,0.7);
-        TVektor blick(0.996195,0.000000,-0.087156);
-        TVektor oben(-0.087156,0.000000,-0.996195);
-
-        const int XAUFL = GetMaxW()/8;
-        const int YAUFL = GetMaxH()/8;
-        const float BRENN =2.2;
-
-        kamera = new Kamera(kam_pos, blick, oben, XAUFL, YAUFL, BRENN);
-
-        // Szene initialisieren.
-        szene = new Szene();
-
-        TColor unirot = RGB(213,17,48);
-        TColor grau = RGB(70,70,70);
-
-        Material mtl_weiss(Weiss, 0);
-        Material mtl_schwarz(grau,0);
-        Material mtl_unirot(unirot,0);
-        Material mtl_metall(Weiss,0.9);
-        Material mtl_gelb(Gelb,0);
+        InsertTaste(0, "Leer", "lädt Leere Szene");
+        InsertTaste(1, "Diamant", "lädt Diamant Szene");
+        InsertTaste(2, "Leer", "lädt Leere Szene");
+        InsertTaste(3, "Leer", "lädt Leere Szene");
+        InsertTaste(4, "Leer", "lädt Leere Szene");
+        InsertTaste(5, "Leer", "lädt Leere Szene");
 
 
-        // Licht
-        szene->lichtHinzufuegen(TVektor(-30,10,30), 1, 0.3);
-
-        // Ebene mit Schachbrettmuster
-        szene->ebeneHinzufuegen(TVektor(-2,2,0),TVektor(0,-1,0),TVektor(1,0,0),4,4,mtl_weiss,mtl_schwarz,0.5);
-
-        // Kugeln zufaellig hinzufuegen
-        const int N = 50;
-        int i=0;
-        while (i<N){
-            float x = static_cast< float >(rand() % 400 - 199)/100.0;
-            float y = static_cast< float >(rand() % 400 - 199)/100.0;
-            if ( ((x<-0.5)||(x>0.5)) && ((y<-0.5)||(y>0.5)) ) {
-                i++;
-                float r = static_cast< float >(rand() % 25 +1)/100.0;
-                float z = static_cast< float >(rand() % 200 +1)/100.0;
-                int level = (rand() % 10);
-                int farbe = (rand() % 10);
-                z = ((level>5) ? r : z);
-                if (farbe == 3) {
-                    szene->kugelHinzufuegen(TVektor(x,y,z), mtl_metall, r);
-                }
-                if ((farbe>4)&&(farbe!=3)) {
-                    szene->kugelHinzufuegen(TVektor(x,y,z), mtl_gelb, r);
-                } else {
-                    szene->kugelHinzufuegen(TVektor(x,y,z), mtl_unirot, r);
-                }
-            }
-        }
 
         // Diamant hinzufuegen
-        Diamant();
+        //Diamant();
+        Leer();
 
 
-        // Einstellungen für Kachel-Rendern.
-        tilesize = 40;
-        currenttile = 0;
-        columns = ceil((float)kamera->aufloesungX/tilesize);
-        rows = ceil((float)kamera->aufloesungY/tilesize);
+
     }
 
     void Run(){
@@ -192,6 +215,55 @@ class TUser : public TPlan {
             finish = clock();
             Busy = PlanString("Fertig nach ") + ((double)(finish - start))/CLOCKS_PER_SEC + PlanString(" s.");
         }
+
+    }
+
+    void RunTaste0(){
+        currenttile = 0;
+        Clear();
+        delete szene;
+        delete kamera;
+        Leer();
+    }
+
+    void RunTaste1(){
+        currenttile = 0;
+        Clear();
+        delete szene;
+        delete kamera;
+        Diamant();
+    }
+
+    void RunTaste2(){
+        currenttile = 0;
+        Clear();
+        delete szene;
+        delete kamera;
+        Leer();
+    }
+
+    void RunTaste3(){
+        currenttile = 0;
+        Clear();
+        delete szene;
+        delete kamera;
+        Leer();
+    }
+
+    void RunTaste4(){
+        currenttile = 0;
+        Clear();
+        delete szene;
+        delete kamera;
+        Leer();
+    }
+
+    void RunTaste5(){
+        currenttile = 0;
+        Clear();
+        delete szene;
+        delete kamera;
+        Leer();
     }
 
     void Finish(){

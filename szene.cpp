@@ -11,8 +11,8 @@ void Szene::ebeneHinzufuegen (TVektor eckpunkt, TVektor a, TVektor b, float brei
     this->anzPrimitive++;
 }
 
-void Szene::lichtHinzufuegen(TVektor position, float helligkeit, float radius){
-    this->lichter.push_back(new Licht(position, helligkeit, radius));
+void Szene::lichtHinzufuegen(TVektor position, float radius){
+    this->lichter.push_back(new Licht(position, radius));
     this->anzLichter++;
 }
 

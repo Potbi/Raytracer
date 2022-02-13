@@ -2,13 +2,16 @@
 
 
 Kamera::Kamera(){
-    this->position = NULL;
-    this->blick = NULL;
-    this->oben = NULL;
-    this->rechts = NULL;
-    this->aufloesungX = NULL;
-    this->aufloesungY = NULL;
-    this->brennweite = NULL;
+    this->position = TVektor(0,0,0);
+    this->blick = TVektor(1,0,0);
+    this->oben = TVektor(0,0,1);
+    this->rechts = Kreuzprodukt(blick, oben);
+    EinheitsVektor(this->blick);
+    EinheitsVektor(this->oben);
+    EinheitsVektor(this->rechts);
+    this->aufloesungX = 100;
+    this->aufloesungY = 100;
+    this->brennweite = 1;
 }
 
 Kamera::Kamera(TVektor position, TVektor blick, TVektor oben, int aufloesungX, int aufloesungY, float brennweite){

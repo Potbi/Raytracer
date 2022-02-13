@@ -30,7 +30,7 @@ class Szene {
 		void kugelHinzufuegen (TVektor position, Material material, float radius);
         void ebeneHinzufuegen (TVektor eckpunkt, TVektor a, TVektor b, float breite, float laenge, Material materialA, Material materialB, float kachelgroesse);
         void dreieckHinzufuegen (TVektor punktA, TVektor punktB, TVektor punktC, Material material);
-        void lichtHinzufuegen (TVektor position, float helligkeit, float radius);
+        void lichtHinzufuegen (TVektor position, float radius);
 };
 #endif
 
