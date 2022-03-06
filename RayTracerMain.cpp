@@ -37,6 +37,48 @@ class TUser : public TPlan {
         rows = ceil((float)kamera->aufloesungY/tilesize);
     }
 
+    void DreiKugeln (){
+
+            // Kamera initialisieren.
+        TVektor kam_pos(-3,0,0.7);
+        TVektor blick(0.996195,0.000000,-0.087156);
+        TVektor oben(-0.087156,0.000000,-0.996195);
+
+        const int XAUFL = GetMaxW();
+        const int YAUFL = GetMaxH();
+        const float BRENN =2.2;
+
+        kamera = new Kamera(kam_pos, blick, oben, XAUFL, YAUFL, BRENN);
+
+        // Einstellungen für Kachel-Rendern.
+        tilesize = 40;
+        currenttile = 0;
+        columns = ceil((float)kamera->aufloesungX/tilesize);
+        rows = ceil((float)kamera->aufloesungY/tilesize);
+
+        // Szene initialisieren.
+        szene = new Szene();
+
+        Material mtl_weiss(Weiss, 0);
+        Material mtl_schwarz(Schwarz,0);
+        Material mtl_matt(Gruen,0);
+        Material mtl_spiegel(Gruen,1);
+        Material mtl_halbspiegel(Gruen,0.5);
+
+        // Licht
+        szene->lichtHinzufuegen(TVektor(-30,10,30), 0.3);
+
+        // Ebene mit Schachbrettmuster
+        szene->ebeneHinzufuegen(TVektor(-2,2,0),TVektor(0,-1,0),TVektor(1,0,0),4,4,mtl_weiss,mtl_schwarz,0.5);
+
+        //Kugeln
+        szene->kugelHinzufuegen(TVektor(0,-1,0.3), mtl_matt, 0.3);
+        szene->kugelHinzufuegen(TVektor(0,0,0.3), mtl_halbspiegel, 0.3);
+        szene->kugelHinzufuegen(TVektor(0,1,0.3), mtl_spiegel, 0.3);
+
+
+    }
+
     void Diamant(){
 
         // Kamera initialisieren.
@@ -186,7 +228,7 @@ class TUser : public TPlan {
 
         InsertTaste(0, "Leer", "lädt Leere Szene");
         InsertTaste(1, "Diamant", "lädt Diamant Szene");
-        InsertTaste(2, "Leer", "lädt Leere Szene");
+        InsertTaste(2, "Drei Kugeln", "lädt Szene mit 3 Kugeln");
         InsertTaste(3, "Leer", "lädt Leere Szene");
         InsertTaste(4, "Leer", "lädt Leere Szene");
         InsertTaste(5, "Leer", "lädt Leere Szene");
@@ -200,6 +242,7 @@ class TUser : public TPlan {
 
 
     }
+
 
     void Run(){
         // Laufzeitmessung starten
@@ -239,7 +282,7 @@ class TUser : public TPlan {
         Clear();
         delete szene;
         delete kamera;
-        Leer();
+        DreiKugeln();
     }
 
     void RunTaste3(){
