@@ -20,6 +20,8 @@ clock_t start, finish;
 Kamera* kamera;
 Szene* szene;
 
+int bildschirmbruchteil = 4;
+
 int totalpx;
 int tilesize;
 int currenttile;
@@ -44,8 +46,8 @@ class TUser : public TPlan {
         TVektor blick(0.996195,0.000000,-0.087156);
         TVektor oben(-0.087156,0.000000,-0.996195);
 
-        const int XAUFL = GetMaxW();
-        const int YAUFL = GetMaxH();
+        const int XAUFL = GetMaxW()/bildschirmbruchteil;
+        const int YAUFL = GetMaxH()/bildschirmbruchteil;
         const float BRENN =2.2;
 
         kamera = new Kamera(kam_pos, blick, oben, XAUFL, YAUFL, BRENN);
@@ -86,8 +88,8 @@ class TUser : public TPlan {
         TVektor blick(0.996195,0.000000,-0.087156);
         TVektor oben(-0.087156,0.000000,-0.996195);
 
-        const int XAUFL = GetMaxW()/8;
-        const int YAUFL = GetMaxH()/8;
+        const int XAUFL = GetMaxW()/bildschirmbruchteil;
+        const int YAUFL = GetMaxH()/bildschirmbruchteil;
         const float BRENN =2.2;
 
         kamera = new Kamera(kam_pos, blick, oben, XAUFL, YAUFL, BRENN);
@@ -229,8 +231,8 @@ class TUser : public TPlan {
         TVektor blick(1,0,0);
         TVektor oben(0,0,1);
 
-        const int XAUFL = GetMaxW()/2;
-        const int YAUFL = GetMaxH()/2;
+        const int XAUFL = GetMaxW()/bildschirmbruchteil;
+        const int YAUFL = GetMaxH()/bildschirmbruchteil;
         const float BRENN =1;
 
         kamera = new Kamera(kam_pos, blick, oben, XAUFL, YAUFL, BRENN);
