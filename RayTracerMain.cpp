@@ -180,13 +180,82 @@ class TUser : public TPlan {
         szene->dreieckHinzufuegen(TVektor(-0.115909,0.158576,0.167524),TVektor(-0.081574,0.313517,0.371142),TVektor(0.034335,0.154941,0.203617),mtl_dia);
     }
 
+    void Tunnel(){
+
+        // Kamera initialisieren.
+        TVektor kam_pos(-3,0.8,0.2);
+        TVektor blick(1,0,0);
+        TVektor oben(0,0,1);
+
+        const int XAUFL = GetMaxW()/2;
+        const int YAUFL = GetMaxH()/2;
+        const float BRENN =1;
+
+        kamera = new Kamera(kam_pos, blick, oben, XAUFL, YAUFL, BRENN);
+
+        // Einstellungen für Kachel-Rendern.
+        tilesize = 40;
+        currenttile = 0;
+        columns = ceil((float)kamera->aufloesungX/tilesize);
+        rows = ceil((float)kamera->aufloesungY/tilesize);
+
+        // Szene initialisieren.
+        szene = new Szene();
+
+        TColor unirot = RGB(213,17,48);
+        TColor grau = RGB(70,70,70);
+
+        Material mtl_weiss(Weiss, 0);
+        Material mtl_schwarz(grau,0);
+        Material mtl_unirot(unirot,0);
+        Material mtl_metall(Weiss,0.9);
+        Material mtl_spiegel(Weiss,1);
+        Material mtl_gelb(Gelb,0);
+
+
+        // Licht
+        szene->lichtHinzufuegen(TVektor(-6,0,0), 0.3);
+
+        // Tunnel aus Ebenen
+        szene->ebeneHinzufuegen(TVektor(-2,2,-1),TVektor(0,-1,0),TVektor(1,0,0),4,12,mtl_metall,mtl_metall,0.5);
+        szene->ebeneHinzufuegen(TVektor(-2,2,1),TVektor(0,-1,0),TVektor(1,0,0),4,12,mtl_metall,mtl_metall,0.5);
+        szene->ebeneHinzufuegen(TVektor(-2,2,-1),TVektor(0,0,1),TVektor(1,0,0),2,12,mtl_metall,mtl_metall,0.5);
+        szene->ebeneHinzufuegen(TVektor(-2,-2,-1),TVektor(0,0,1),TVektor(1,0,0),2,12,mtl_metall,mtl_metall,0.5);
+
+        // Kugeln zufaellig hinzufuegen
+        const int N = 10;
+        int i=0;
+        while (i<N){
+            float x = static_cast< float >(rand() % 400 - 199)/100.0;
+            float y = static_cast< float >(rand() % 400 - 199)/100.0;
+            if ( ((x<-0.5)||(x>0.5)) && ((y<-0.5)||(y>0.5)) ) {
+                i++;
+                float r = static_cast< float >(rand() % 25 +1)/100.0;
+                float z = static_cast< float >(rand() % 200 +1)/100.0;
+                int level = (rand() % 10);
+                int farbe = (rand() % 10);
+                z = ((level>5) ? r : z);
+                if (farbe == 3) {
+                    szene->kugelHinzufuegen(TVektor(x,y,z), mtl_metall, r);
+                }
+                if ((farbe>4)&&(farbe!=3)) {
+                    szene->kugelHinzufuegen(TVektor(x,y,z), mtl_gelb, r);
+                } else {
+                    szene->kugelHinzufuegen(TVektor(x,y,z), mtl_unirot, r);
+                }
+            }
+        }
+
+
+    }
+
     void Init(){
         ProgrammName = "Einfacher Ray-Tracing Renderer";
         ProgrammInfo = "Simulation komplexer System WS21/22\nJoern Froboese\nKatja Ruge\nMaximilian Kens";
 
         InsertTaste(0, "Leer", "lädt Leere Szene");
         InsertTaste(1, "Diamant", "lädt Diamant Szene");
-        InsertTaste(2, "Leer", "lädt Leere Szene");
+        InsertTaste(2, "Tunnel", "lädt Tunnel Szene");
         InsertTaste(3, "Leer", "lädt Leere Szene");
         InsertTaste(4, "Leer", "lädt Leere Szene");
         InsertTaste(5, "Leer", "lädt Leere Szene");
@@ -239,7 +308,7 @@ class TUser : public TPlan {
         Clear();
         delete szene;
         delete kamera;
-        Leer();
+        Tunnel();
     }
 
     void RunTaste3(){
