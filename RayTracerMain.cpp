@@ -20,7 +20,7 @@ clock_t start, finish;
 Kamera* kamera;
 Szene* szene;
 
-int bildschirmbruchteil = 4;
+int bildschirmbruchteil = 14;
 
 int totalpx;
 int tilesize;
@@ -289,6 +289,193 @@ class TUser : public TPlan {
                 }
             }
         }
+    }
+
+    void Face(){
+
+            // Kamera initialisieren.
+        TVektor kam_pos(2.7,0,-2);
+        TVektor blick(-1,0,1);
+        TVektor oben(0,-1,0);
+
+
+        const int XAUFL = GetMaxH()/(bildschirmbruchteil);
+        const int YAUFL = GetMaxH()/(bildschirmbruchteil);
+        const float BRENN =2.6;
+
+        kamera = new Kamera(kam_pos, blick, oben, XAUFL, YAUFL, BRENN);
+
+        // Einstellungen f�r Kachel-Rendern.
+        tilesize = 40;
+        currenttile = 0;
+        columns = ceil((float)kamera->aufloesungX/tilesize);
+        rows = ceil((float)kamera->aufloesungY/tilesize);
+
+        // Szene initialisieren.
+        szene = new Szene();
+
+        Material mtl_weiss(Weiss, 0);
+        Material mtl_schwarz(Schwarz,0);
+        Material mtl_Rot(Rot,0.3);
+        Material mtl_spiegel(Weiss,0.9);
+        Material mtl_dunkelrot(RGBSkala(33,0,0),0);
+        Material mtl_haut(RGBSkala(100,59,33),0);
+
+        // Licht
+        szene->lichtHinzufuegen(TVektor(3,0,-3), 0.3);
+
+        //Dreiecke
+        szene->dreieckHinzufuegen(TVektor(0.252478,0.250623,0.050021),TVektor(0.272111,0.424200,0.131681),TVektor(0.152994,0.187188,0.079003),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.272111,0.424200,-0.131681),TVektor(0.252478,0.250623,-0.050022),TVektor(0.152994,0.187188,-0.079003),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.337680,-0.429519,0.083157),TVektor(0.344078,-0.443089,-0.000000),TVektor(0.310967,-0.339132,0.025443),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.344078,-0.443089,-0.000000),TVektor(0.310967,-0.339132,-0.025443),TVektor(0.310967,-0.339132,0.025443),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.344078,-0.443089,-0.000000),TVektor(0.337680,-0.429519,-0.083157),TVektor(0.310967,-0.339132,-0.025443),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.425808,-0.299615,0.011734),TVektor(0.425808,-0.299616,0.036162),TVektor(0.310967,-0.339132,0.025443),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.310967,-0.339132,-0.025443),TVektor(0.425808,-0.299616,-0.036162),TVektor(0.425808,-0.299616,-0.011734),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.425808,-0.299615,0.011734),TVektor(0.310967,-0.339132,0.025443),TVektor(0.425808,-0.299616,-0.011734),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.310967,-0.339132,0.025443),TVektor(0.310967,-0.339132,-0.025443),TVektor(0.425808,-0.299616,-0.011734),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.526909,-0.217920,-0.000000),TVektor(0.481365,-0.211800,-0.079041),TVektor(0.307312,0.262038,-0.000000),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.526909,-0.217920,-0.000000),TVektor(0.425808,-0.299616,-0.011734),TVektor(0.481365,-0.211800,-0.079041),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.252478,0.250623,-0.050022),TVektor(0.292624,-0.233330,-0.079040),TVektor(0.152994,0.187188,-0.079003),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.425808,-0.299616,-0.036162),TVektor(0.310967,-0.339132,-0.025443),TVektor(0.292624,-0.233330,-0.079040),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.307312,0.262038,-0.000000),TVektor(0.252478,0.250623,-0.050022),TVektor(0.272111,0.424200,-0.131681),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.152994,0.187188,-0.079003),TVektor(0.292624,-0.233330,-0.079040),TVektor(0.037915,0.192898,-0.480456),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.292624,-0.233330,-0.079040),TVektor(0.337680,-0.429519,-0.083157),TVektor(0.284918,-0.509264,-0.203515),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.133598,-0.251082,-0.420063),TVektor(0.292624,-0.233330,-0.079040),TVektor(0.211474,-0.572864,-0.315706),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.331535,-0.591320,-0.125056),TVektor(0.336669,-0.614172,-0.000000),TVektor(0.298595,-0.651036,-0.128792),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.331535,-0.591320,-0.125056),TVektor(0.298595,-0.651036,-0.128792),TVektor(0.284918,-0.509264,-0.203515),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.303728,-0.673891,-0.000000),TVektor(0.305688,-0.853222,-0.000000),TVektor(0.298595,-0.651036,-0.128792),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.211474,-0.572864,-0.315706),TVektor(0.284918,-0.509264,-0.203515),TVektor(0.298595,-0.651036,-0.128792),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.321691,0.438492,-0.000000),TVektor(0.175271,0.884169,-0.093984),TVektor(0.183311,0.896988,-0.000000),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.233807,-0.804031,-0.147786),TVektor(0.305688,-0.853222,-0.000000),TVektor(0.047299,-0.769636,-0.214821),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.175271,0.884169,-0.093984),TVektor(0.060328,0.781745,-0.441679),TVektor(-0.451100,1.188904,-0.083930),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.175271,0.884169,-0.093984),TVektor(0.201696,0.422484,-0.453494),TVektor(0.060328,0.781745,-0.441679),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.183311,0.896988,-0.000000),TVektor(0.175271,0.884169,-0.093984),TVektor(-0.451100,1.188904,-0.083930),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.037915,0.192898,-0.480456),TVektor(-0.368543,0.284194,-0.616184),TVektor(0.201696,0.422484,-0.453494),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.050755,-0.616432,-0.404977),TVektor(0.211474,-0.572864,-0.315706),TVektor(0.047299,-0.769636,-0.214821),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.234983,-0.270325,-0.496902),TVektor(0.211474,-0.572864,-0.315706),TVektor(-0.050755,-0.616432,-0.404977),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.037915,0.192898,-0.480456),TVektor(-0.234983,-0.270325,-0.496902),TVektor(-0.368543,0.284194,-0.616184),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.234983,-0.270325,-0.496902),TVektor(-0.356054,-0.441801,-0.499736),TVektor(-0.503386,-0.235333,-0.500551),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.225564,-0.612143,-0.400558),TVektor(-0.234983,-0.270325,-0.496902),TVektor(-0.050755,-0.616432,-0.404977),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.094870,-0.734971,-0.290978),TVektor(-0.225564,-0.612143,-0.400558),TVektor(0.047299,-0.769636,-0.214821),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.129157,-0.840458,-0.000000),TVektor(-0.018264,-0.831302,0.000000),TVektor(0.047299,-0.769636,-0.214821),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.429662,-1.055333,-0.267851),TVektor(-0.581950,-1.007189,-0.393724),TVektor(-0.356054,-0.441801,-0.499736),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.259712,-1.044447,0.000000),TVektor(-0.429662,-1.055333,-0.267851),TVektor(-0.287628,-0.826596,-0.202588),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.225564,-0.612143,-0.400558),TVektor(-0.094870,-0.734971,-0.290978),TVektor(-0.287628,-0.826596,-0.202588),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.259712,-1.044447,0.000000),TVektor(-0.219726,-0.859500,-0.133844),TVektor(-0.168691,-0.872945,0.000000),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.168691,-0.872945,0.000000),TVektor(-0.094870,-0.734971,-0.290978),TVektor(-0.018264,-0.831302,0.000000),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.287628,-0.826596,-0.202588),TVektor(-0.219726,-0.859500,-0.133844),TVektor(-0.259712,-1.044447,0.000000),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.526909,-0.217920,-0.000000),TVektor(0.307312,0.262038,-0.000000),TVektor(0.481365,-0.211800,0.079041),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.481365,-0.211800,0.079041),TVektor(0.425808,-0.299616,0.036162),TVektor(0.425808,-0.299616,0.011734),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.252478,0.250623,0.050021),TVektor(0.152994,0.187188,0.079003),TVektor(0.292624,-0.233330,0.079040),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.425808,-0.299616,0.036162),TVektor(0.292624,-0.233330,0.079040),TVektor(0.310967,-0.339132,0.025443),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.307312,0.262038,-0.000000),TVektor(0.272111,0.424200,0.131681),TVektor(0.252478,0.250623,0.050021),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.152994,0.187188,0.079003),TVektor(0.037915,0.192898,0.480456),TVektor(0.292624,-0.233330,0.079040),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.292624,-0.233330,0.079040),TVektor(0.284918,-0.509264,0.203515),TVektor(0.337680,-0.429519,0.083157),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.133598,-0.251082,0.420063),TVektor(0.211474,-0.572864,0.315706),TVektor(0.292624,-0.233330,0.079040),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.331535,-0.591320,0.125056),TVektor(0.298595,-0.651036,0.128792),TVektor(0.336669,-0.614172,-0.000000),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.331535,-0.591320,0.125056),TVektor(0.284918,-0.509264,0.203515),TVektor(0.298595,-0.651036,0.128792),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.303728,-0.673891,-0.000000),TVektor(0.298595,-0.651036,0.128792),TVektor(0.305688,-0.853222,-0.000000),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.211474,-0.572864,0.315706),TVektor(0.233807,-0.804031,0.147786),TVektor(0.298595,-0.651036,0.128792),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.321691,0.438492,-0.000000),TVektor(0.175271,0.884169,0.093984),TVektor(0.272111,0.424200,0.131681),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.233807,-0.804031,0.147786),TVektor(0.047299,-0.769636,0.214821),TVektor(0.305688,-0.853222,-0.000000),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.175271,0.884169,0.093984),TVektor(-0.508512,1.022462,0.468151),TVektor(0.060328,0.781745,0.441679),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.175271,0.884169,0.093984),TVektor(0.060328,0.781745,0.441679),TVektor(0.201696,0.422484,0.453494),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.183311,0.896988,-0.000000),TVektor(-0.451100,1.188904,0.083930),TVektor(0.175271,0.884169,0.093984),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.037915,0.192898,0.480456),TVektor(-0.508512,1.022462,0.468151),TVektor(-0.368543,0.284194,0.616184),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.050755,-0.616432,0.404977),TVektor(0.047299,-0.769636,0.214821),TVektor(0.211474,-0.572864,0.315706),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.234983,-0.270325,0.496902),TVektor(0.211474,-0.572864,0.315706),TVektor(0.133598,-0.251082,0.420063),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.037915,0.192898,0.480456),TVektor(-0.368543,0.284194,0.616184),TVektor(-0.234983,-0.270325,0.496902),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.234983,-0.270325,0.496902),TVektor(-0.503386,-0.235333,0.500551),TVektor(-0.356054,-0.441801,0.499736),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.225564,-0.612143,0.400558),TVektor(-0.234983,-0.270325,0.496902),TVektor(-0.356054,-0.441801,0.499736),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.094870,-0.734971,0.290978),TVektor(0.047299,-0.769636,0.214821),TVektor(-0.225564,-0.612143,0.400558),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.129157,-0.840458,-0.000000),TVektor(0.047299,-0.769636,0.214821),TVektor(-0.018264,-0.831302,0.000000),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.429662,-1.055333,0.267851),TVektor(-0.356054,-0.441801,0.499736),TVektor(-0.581950,-1.007189,0.393724),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.259712,-1.044447,0.000000),TVektor(-0.287628,-0.826596,0.202588),TVektor(-0.429662,-1.055333,0.267851),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.225564,-0.612143,0.400558),TVektor(-0.287628,-0.826596,0.202588),TVektor(-0.094870,-0.734971,0.290978),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.259712,-1.044447,0.000000),TVektor(-0.168691,-0.872945,0.000000),TVektor(-0.219726,-0.859500,0.133844),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.168691,-0.872945,0.000000),TVektor(-0.094870,-0.734971,0.290978),TVektor(-0.219726,-0.859500,0.133844),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.287628,-0.826596,0.202588),TVektor(-0.259712,-1.044447,0.000000),TVektor(-0.219726,-0.859500,0.133844),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.234983,-0.270325,0.496902),TVektor(0.133598,-0.251082,0.420063),TVektor(0.037915,0.192898,0.480456),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.503386,-0.235333,0.500551),TVektor(-0.234983,-0.270325,0.496902),TVektor(-0.368543,0.284194,0.616184),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.201696,0.422484,0.453494),TVektor(0.272111,0.424200,0.131681),TVektor(0.175271,0.884169,0.093984),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.508512,1.022462,0.468151),TVektor(0.201696,0.422484,0.453494),TVektor(0.060328,0.781745,0.441679),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.201696,0.422484,0.453494),TVektor(-0.508512,1.022462,0.468151),TVektor(0.037915,0.192898,0.480456),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.508512,1.022462,0.468151),TVektor(0.175271,0.884169,0.093984),TVektor(-0.451100,1.188904,0.083930),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.175271,0.884169,-0.093984),TVektor(0.321691,0.438492,-0.000000),TVektor(0.272111,0.424200,-0.131681),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.451100,1.188904,-0.083930),TVektor(-0.450086,1.208294,0.000000),TVektor(0.183311,0.896988,-0.000000),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.451100,1.188904,0.083930),TVektor(0.183311,0.896988,-0.000000),TVektor(-0.450086,1.208294,0.000000),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.201696,0.422484,-0.453494),TVektor(-0.368543,0.284194,-0.616184),TVektor(0.060328,0.781745,-0.441679),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.060328,0.781745,-0.441679),TVektor(-0.368543,0.284194,-0.616184),TVektor(-0.508512,1.022462,-0.468151),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.451100,1.188904,-0.083930),TVektor(0.060328,0.781745,-0.441679),TVektor(-0.508512,1.022462,-0.468151),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.175271,0.884169,0.093984),TVektor(0.321691,0.438492,-0.000000),TVektor(0.183311,0.896988,-0.000000),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.201696,0.422484,-0.453494),TVektor(0.175271,0.884169,-0.093984),TVektor(0.272111,0.424200,-0.131681),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.272111,0.424200,0.131681),TVektor(0.307312,0.262038,-0.000000),TVektor(0.321691,0.438492,-0.000000),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.234983,-0.270325,-0.496902),TVektor(0.037915,0.192898,-0.480456),TVektor(0.133598,-0.251082,-0.420063),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.503386,-0.235333,-0.500551),TVektor(-0.368543,0.284194,-0.616184),TVektor(-0.234983,-0.270325,-0.496902),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.272111,0.424200,-0.131681),TVektor(0.321691,0.438492,-0.000000),TVektor(0.307312,0.262038,-0.000000),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.287628,-0.826596,-0.202588),TVektor(-0.356054,-0.441801,-0.499736),TVektor(-0.225564,-0.612143,-0.400558),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.356054,-0.441801,-0.499736),TVektor(-0.287628,-0.826596,-0.202588),TVektor(-0.429662,-1.055333,-0.267851),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.356054,-0.441801,-0.499736),TVektor(-0.581950,-1.007189,-0.393724),TVektor(-0.503386,-0.235333,-0.500551),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.429662,-1.055333,0.267851),TVektor(-0.225564,-0.612143,0.400558),TVektor(-0.356054,-0.441801,0.499736),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.225564,-0.612143,0.400558),TVektor(-0.429662,-1.055333,0.267851),TVektor(-0.287628,-0.826596,0.202588),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.581950,-1.007189,0.393724),TVektor(-0.356054,-0.441801,0.499736),TVektor(-0.503386,-0.235333,0.500551),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.094870,-0.734971,-0.290978),TVektor(-0.168691,-0.872945,0.000000),TVektor(-0.219726,-0.859500,-0.133844),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.094870,-0.734971,0.290978),TVektor(-0.168691,-0.872945,0.000000),TVektor(-0.018264,-0.831302,0.000000),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.287628,-0.826596,-0.202588),TVektor(-0.094870,-0.734971,-0.290978),TVektor(-0.219726,-0.859500,-0.133844),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.094870,-0.734971,0.290978),TVektor(-0.287628,-0.826596,0.202588),TVektor(-0.219726,-0.859500,0.133844),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.047299,-0.769636,-0.214821),TVektor(0.211474,-0.572864,-0.315706),TVektor(0.233807,-0.804031,-0.147786),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.047299,-0.769636,-0.214821),TVektor(-0.018264,-0.831302,0.000000),TVektor(-0.094870,-0.734971,-0.290978),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.225564,-0.612143,0.400558),TVektor(0.047299,-0.769636,0.214821),TVektor(-0.050755,-0.616432,0.404977),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.305688,-0.853222,-0.000000),TVektor(0.298595,-0.651036,0.128792),TVektor(0.233807,-0.804031,0.147786),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.047299,-0.769636,-0.214821),TVektor(0.305688,-0.853222,-0.000000),TVektor(0.129157,-0.840458,-0.000000),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.298595,-0.651036,-0.128792),TVektor(0.233807,-0.804031,-0.147786),TVektor(0.211474,-0.572864,-0.315706),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.211474,-0.572864,0.315706),TVektor(0.047299,-0.769636,0.214821),TVektor(0.233807,-0.804031,0.147786),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.047299,-0.769636,-0.214821),TVektor(-0.225564,-0.612143,-0.400558),TVektor(-0.050755,-0.616432,-0.404977),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.018264,-0.831302,0.000000),TVektor(0.047299,-0.769636,0.214821),TVektor(-0.094870,-0.734971,0.290978),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.298595,-0.651036,-0.128792),TVektor(0.305688,-0.853222,-0.000000),TVektor(0.233807,-0.804031,-0.147786),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.298595,-0.651036,0.128792),TVektor(0.284918,-0.509264,0.203515),TVektor(0.211474,-0.572864,0.315706),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.305688,-0.853222,-0.000000),TVektor(0.047299,-0.769636,0.214821),TVektor(0.129157,-0.840458,-0.000000),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.234983,-0.270325,0.496902),TVektor(-0.225564,-0.612143,0.400558),TVektor(-0.050755,-0.616432,0.404977),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.211474,-0.572864,0.315706),TVektor(-0.234983,-0.270325,0.496902),TVektor(-0.050755,-0.616432,0.404977),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.292624,-0.233330,0.079040),TVektor(0.211474,-0.572864,0.315706),TVektor(0.284918,-0.509264,0.203515),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.292624,-0.233330,0.079040),TVektor(0.037915,0.192898,0.480456),TVektor(0.133598,-0.251082,0.420063),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.336669,-0.614172,-0.000000),TVektor(0.298595,-0.651036,0.128792),TVektor(0.303728,-0.673891,-0.000000),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.307312,0.262038,-0.000000),TVektor(0.481365,-0.211800,-0.079041),TVektor(0.252478,0.250623,-0.050022),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.481365,-0.211800,0.079041),TVektor(0.307312,0.262038,-0.000000),TVektor(0.252478,0.250623,0.050021),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.425808,-0.299616,-0.011734),TVektor(0.425808,-0.299616,-0.036162),TVektor(0.481365,-0.211800,-0.079041),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.298595,-0.651036,-0.128792),TVektor(0.336669,-0.614172,-0.000000),TVektor(0.303728,-0.673891,-0.000000),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.425808,-0.299616,0.011734),TVektor(0.526909,-0.217920,-0.000000),TVektor(0.481365,-0.211800,0.079041),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.337680,-0.429519,0.083157),TVektor(0.310967,-0.339132,0.025443),TVektor(0.292624,-0.233330,0.079040),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.337680,-0.429519,-0.083157),TVektor(0.292624,-0.233330,-0.079040),TVektor(0.310967,-0.339132,-0.025443),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.211474,-0.572864,-0.315706),TVektor(0.292624,-0.233330,-0.079040),TVektor(0.284918,-0.509264,-0.203515),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.211474,-0.572864,-0.315706),TVektor(-0.234983,-0.270325,-0.496902),TVektor(0.133598,-0.251082,-0.420063),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.037915,0.192898,-0.480456),TVektor(0.292624,-0.233330,-0.079040),TVektor(0.133598,-0.251082,-0.420063),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.292624,-0.233330,0.079040),TVektor(0.481365,-0.211800,0.079041),TVektor(0.252478,0.250623,0.050021),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.292624,-0.233330,0.079040),TVektor(0.425808,-0.299616,0.036162),TVektor(0.481365,-0.211800,0.079041),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.292624,-0.233330,-0.079040),TVektor(0.252478,0.250623,-0.050022),TVektor(0.481365,-0.211800,-0.079041),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.292624,-0.233330,-0.079040),TVektor(0.481365,-0.211800,-0.079041),TVektor(0.425808,-0.299616,-0.036162),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(-0.234983,-0.270325,-0.496902),TVektor(-0.225564,-0.612143,-0.400558),TVektor(-0.356054,-0.441801,-0.499736),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.526909,-0.217920,-0.000000),TVektor(0.425808,-0.299615,0.011734),TVektor(0.425808,-0.299616,-0.011734),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.425808,-0.299616,0.011734),TVektor(0.425808,-0.299615,-0.011734),TVektor(0.526909,-0.217920,-0.000000),mtl_haut);
+        szene->dreieckHinzufuegen(TVektor(0.152994,0.187188,0.079003),TVektor(0.201696,0.422484,0.453494),TVektor(0.037915,0.192898,0.480456),mtl_Rot);
+        szene->dreieckHinzufuegen(TVektor(0.152994,0.187188,-0.079003),TVektor(0.037915,0.192898,-0.480456),TVektor(0.201696,0.422484,-0.453494),mtl_Rot);
+        szene->dreieckHinzufuegen(TVektor(0.201696,0.422484,-0.453494),TVektor(0.272111,0.424200,-0.131681),TVektor(0.152994,0.187188,-0.079003),mtl_Rot);
+        szene->dreieckHinzufuegen(TVektor(0.272111,0.424200,0.131681),TVektor(0.201696,0.422484,0.453494),TVektor(0.152994,0.187188,0.079003),mtl_Rot);
+        szene->dreieckHinzufuegen(TVektor(0.284918,-0.509264,-0.203515),TVektor(0.337680,-0.429519,-0.083157),TVektor(0.279741,-0.536108,-0.088780),mtl_dunkelrot);
+        szene->dreieckHinzufuegen(TVektor(0.286137,-0.536655,-0.000000),TVektor(0.279741,-0.536108,-0.088780),TVektor(0.344078,-0.443089,-0.000000),mtl_dunkelrot);
+        szene->dreieckHinzufuegen(TVektor(0.279741,-0.536108,-0.088780),TVektor(0.331535,-0.591320,-0.125056),TVektor(0.284918,-0.509264,-0.203515),mtl_dunkelrot);
+        szene->dreieckHinzufuegen(TVektor(0.286137,-0.536655,-0.000000),TVektor(0.336669,-0.614172,-0.000000),TVektor(0.279741,-0.536108,-0.088780),mtl_dunkelrot);
+        szene->dreieckHinzufuegen(TVektor(0.284918,-0.509264,0.203515),TVektor(0.279742,-0.536108,0.088780),TVektor(0.337680,-0.429519,0.083157),mtl_dunkelrot);
+        szene->dreieckHinzufuegen(TVektor(0.286137,-0.536655,-0.000000),TVektor(0.344078,-0.443089,-0.000000),TVektor(0.279742,-0.536108,0.088780),mtl_dunkelrot);
+        szene->dreieckHinzufuegen(TVektor(0.279742,-0.536108,0.088780),TVektor(0.284918,-0.509264,0.203515),TVektor(0.331535,-0.591320,0.125056),mtl_dunkelrot);
+        szene->dreieckHinzufuegen(TVektor(0.286137,-0.536655,-0.000000),TVektor(0.279742,-0.536108,0.088780),TVektor(0.336669,-0.614172,-0.000000),mtl_dunkelrot);
+        szene->dreieckHinzufuegen(TVektor(0.279742,-0.536108,0.088780),TVektor(0.344078,-0.443089,-0.000000),TVektor(0.337680,-0.429519,0.083157),mtl_dunkelrot);
+        szene->dreieckHinzufuegen(TVektor(0.336669,-0.614172,-0.000000),TVektor(0.279742,-0.536108,0.088780),TVektor(0.331535,-0.591320,0.125056),mtl_dunkelrot);
+        szene->dreieckHinzufuegen(TVektor(0.344078,-0.443089,-0.000000),TVektor(0.279741,-0.536108,-0.088780),TVektor(0.337680,-0.429519,-0.083157),mtl_dunkelrot);
+        szene->dreieckHinzufuegen(TVektor(0.279741,-0.536108,-0.088780),TVektor(0.336669,-0.614172,-0.000000),TVektor(0.331535,-0.591320,-0.125056),mtl_dunkelrot);
+        szene->dreieckHinzufuegen(TVektor(3.174232,-3.174233,1.130244),TVektor(-3.174233,3.174234,1.130245),TVektor(-3.174233,-3.174232,1.130245),mtl_spiegel);
+        szene->dreieckHinzufuegen(TVektor(3.174232,-3.174233,1.130244),TVektor(3.174233,3.174232,1.130245),TVektor(-3.174233,3.174234,1.130245),mtl_spiegel);
 
 
     }
@@ -301,7 +488,7 @@ class TUser : public TPlan {
         InsertTaste(1, "Diamant", "l�dt Diamant Szene");
         InsertTaste(2, "Drei Kugeln", "l�dt Szene mit 3 Kugeln");
         InsertTaste(3, "Tunnel", "l�dt Tunnel Szene");
-        InsertTaste(4, "Leer", "l�dt Leere Szene");
+        InsertTaste(4, "Gesicht", "l�dt default Face Szene");
         InsertTaste(5, "Leer", "l�dt Leere Szene");
 
 
@@ -369,7 +556,7 @@ class TUser : public TPlan {
         Clear();
         delete szene;
         delete kamera;
-        Leer();
+        Face();
     }
 
     void RunTaste5(){
