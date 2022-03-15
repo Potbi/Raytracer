@@ -52,7 +52,7 @@ class TUser : public TPlan {
 
         kamera = new Kamera(kam_pos, blick, oben, XAUFL, YAUFL, BRENN);
 
-        // Einstellungen f�r Kachel-Rendern.
+        // Einstellungen fuer Kachel-Rendern.
         tilesize = 40;
         currenttile = 0;
         columns = ceil((float)kamera->aufloesungX/tilesize);
@@ -68,7 +68,7 @@ class TUser : public TPlan {
         Material mtl_halbspiegel(Gruen,0.5);
 
         // Licht
-        szene->lichtHinzufuegen(TVektor(-30,10,30), 0.3);
+        szene->lichtHinzufuegen(TVektor(0,0,1.2), 0.1);
 
         // Ebene mit Schachbrettmuster
         szene->ebeneHinzufuegen(TVektor(-2,2,0),TVektor(0,-1,0),TVektor(1,0,0),4,4,mtl_weiss,mtl_schwarz,0.5);
