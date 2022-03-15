@@ -20,7 +20,7 @@ clock_t start, finish;
 Kamera* kamera;
 Szene* szene;
 
-int bildschirmbruchteil = 14;
+int bildschirmbruchteil = 3;
 
 int totalpx;
 int tilesize;
