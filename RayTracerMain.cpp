@@ -489,16 +489,8 @@ class TUser : public TPlan {
         InsertTaste(2, "Drei Kugeln", "l�dt Szene mit 3 Kugeln");
         InsertTaste(3, "Tunnel", "l�dt Tunnel Szene");
         InsertTaste(4, "Gesicht", "l�dt default Face Szene");
-        InsertTaste(5, "Leer", "l�dt Leere Szene");
 
-
-
-        // Diamant hinzufuegen
-        //Diamant();
         Leer();
-
-
-
     }
 
 
@@ -557,14 +549,6 @@ class TUser : public TPlan {
         delete szene;
         delete kamera;
         Face();
-    }
-
-    void RunTaste5(){
-        currenttile = 0;
-        Clear();
-        delete szene;
-        delete kamera;
-        Leer();
     }
 
     void Finish(){
